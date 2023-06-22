@@ -14,7 +14,6 @@ class AdminController {
     }
 
     public function index() {
-        session_start();
         header('Location: view/UserView.php');
     }
 

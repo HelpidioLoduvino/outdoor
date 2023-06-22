@@ -12,7 +12,7 @@ class LocalidadeRepository implements ILocalidadeRepository {
             $stmt = Db::getConn()->prepare($query);
             $stmt->execute();
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                echo "<option value='" . $row['id'] . "'>" . $row['nome'] . "</option>";
+                echo "<option value='" . $row['nome'] . "'>" . $row['nome'] . "</option>";
             }
         } catch (PDOException $e) {
             echo $e->getMessage();

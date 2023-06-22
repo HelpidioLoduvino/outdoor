@@ -107,5 +107,4 @@ class AdminRepository implements IAdminRepository {
         $stmt_cliente->bindParam(':atividadeEmpresa', $cliente->getAtividadeEmpresa());
         $stmt_cliente->execute();
     }
-
 }

@@ -1,5 +1,6 @@
 <?php
 require_once '/Applications/XAMPP/xamppfiles/htdocs/outdoor-angola/controller/AdminController.php';
+require_once '/Applications/XAMPP/xamppfiles/htdocs/outdoor-angola/controller/LocalidadeController.php';
 require_once '/Applications/XAMPP/xamppfiles/htdocs/outdoor-angola/model/User.php';
 session_start();
 ?>
@@ -12,6 +13,9 @@ session_start();
         <link href="../content/bootstrap/fonts/fontawesome.css" rel="stylesheet" type="text/css" media="screen"/>
     </head>
     <body>
+        <?php
+        $isLoggedIn = isset($_SESSION['tipo']) && $_SESSION['tipo'] === 'admin';
+        ?>
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <a class="navbar-brand title" href="#" style="margin-left: 20px;">Admin</a>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -36,11 +40,13 @@ session_start();
                     <li class="nav-item">
                         <a class="nav-link" href="#" data-target="#listManagerModal">Listar Gestor</a>
                     </li>
-                    
-                    <li class="nav-item " style="margin-left: 600px;">
-                        <a class="nav-link " href="../actions/logout.php">Logout</a>
-                    </li>
-                    
+
+                    <?php if ($isLoggedIn): ?>
+                        <li class="nav-item ml-auto">
+                            <a class="nav-link" href="../actions/logout.php">Logout</a>
+                        </li>
+                    <?php endif; ?>
+
                 </ul>
             </div>
         </nav>
@@ -65,38 +71,25 @@ session_start();
                                 </tr>
                                 <tr>
                                     <td>
-                                        <select name="comuna" class="form-control">
-                                            <option  >--Comuna --</option>
-                                            <option  >== LUANDA ==</option>
-                                            <option value="Viana">Viana</option>
-                                            <option value="Cazenga">Cazenga</option>
-                                            <option value="Talatona">Talatona</option>
-                                            <option value="Belas">Belas</option>
-                                            <option value="Icolo E Bengo">Icolo E Bengo</option>
-                                            <option value="Luanda">Luanda</option>
-                                            <option value="Cacuaco">Cacuaco</option>
-                                            <option value="Muxima">Muxima</option>
-                                            <option value="Quilamba Quiaxi">Quilamba Quiaxi</option>
-                                            <option  >== Bengo ==</option>
-                                            <option value="Ambriz">Ambriz</option>
-                                            <option value="Bula Atumba">Bula Atumba</option>
-                                            <option value="Caxito">Caxito</option>
-                                            <option value="Quibaxe">Quibaxe</option>
-                                            <option value="Muxaluando">Muxaluando</option>
-                                            <option value="Pango Aluquem">Pango Aluquem</option>
+                                        <select name="provincia" id="provinciaSelect" class="form-control">
+                                            <option  >-- Provincia --</option>
+                                            <?php
+                                            $localidadeController->mostrarProvincia();
+                                            ?>
                                         </select>  
                                     </td>
 
                                     <td>
-                                        <select name="municipio" class="form-control">
+                                        <select name="municipio" id="municipioSelect" class="form-control">
                                             <option >-- Municipio --</option>
+
                                         </select>  
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>
-                                        <select name="provincia" class="form-control">
-                                            <option   >-- Provincia --</option>
+                                        <select name="comuna" id="comunaSelect" class="form-control">
+                                            <option   >-- Comuna --</option>
                                         </select>  
                                     </td>
 
@@ -118,7 +111,7 @@ session_start();
                         </form>
                         <?php
                         if (isset($_POST["add_admin"])) {
-                            
+
                             $user = new User();
                             $tipo = filter_input(INPUT_POST, 'tipo', FILTER_SANITIZE_STRING);
                             $nome = filter_input(INPUT_POST, 'nome', FILTER_SANITIZE_STRING);
@@ -131,7 +124,6 @@ session_start();
                             $username = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_STRING);
                             $password = filter_input(INPUT_POST, 'password', FILTER_SANITIZE_STRING);
                             $confirmPassword = filter_input(INPUT_POST, 'confirmPassword', FILTER_SANITIZE_STRING);
-                            
 
                             $user->setTipo($tipo);
                             $user->setNome($nome);
@@ -360,5 +352,6 @@ session_start();
         <script src="../scripts/jquery/jquery.min.js"></script>
         <script src="../scripts/bootstrap/css/bootstrap.min.js"></script>
         <script src="../scripts/custom/app.js"></script>
+        <script src="../scripts/custom/localidade.js"></script>
     </body>
 </html>

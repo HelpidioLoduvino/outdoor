@@ -4,6 +4,7 @@ class Comuna {
     private $id;
     private $nome;
     private $comuna_id;
+    
     public function getId() {
         return $this->id;
     }

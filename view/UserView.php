@@ -1,8 +1,10 @@
 <?php
 require_once '/Applications/XAMPP/xamppfiles/htdocs/outdoor-angola/controller/AdminController.php';
+require_once '/Applications/XAMPP/xamppfiles/htdocs/outdoor-angola/controller/OutdoorController.php';
 require_once '/Applications/XAMPP/xamppfiles/htdocs/outdoor-angola/controller/LocalidadeController.php';
 require_once '/Applications/XAMPP/xamppfiles/htdocs/outdoor-angola/model/User.php';
 require_once '/Applications/XAMPP/xamppfiles/htdocs/outdoor-angola/model/Cliente.php';
+require_once '/Applications/XAMPP/xamppfiles/htdocs/outdoor-angola/model/Outdoor.php';
 session_start();
 ?>
 <html>
@@ -30,10 +32,22 @@ session_start();
                 <ul class="navbar-nav mr-auto">
 
                     <li class="nav-item ">
-                        <a class="nav-link" href="#" data-target="#consultarOutdoorModal">Consultar Outdoor</a>
+                        <?php if ($isLoggedIn): ?>
+                            <a class="nav-link" href="#" data-target="#consultarOutdoorModal">Consultar Outdoor</a>
+                        <?php else: ?>
+                            <a class="nav-link" href="../view/LoginView.php">Consultar Outdoor</a>
+                        <?php endif; ?>
+                    </li>
+                    
+                    <li class="nav-item ">
+                        <?php if ($isLoggedIn): ?>
+                            <a class="nav-link" href="#" data-target="#carregarPagamentoModal">Carregar Pagamento</a>
+                        <?php else: ?>
+                            <a class="nav-link" href="../view/LoginView.php">Carregar Pagamento</a>
+                        <?php endif; ?>
                     </li>
 
-                    <li class="nav-item ml-auto" style="margin-left: 600px;">
+                    <li class="nav-item ml-auto" style="margin-left: 500px;">
                         <?php if (!$isLoggedIn): ?>
                             <a class="nav-link" href="../view/LoginView.php">Login</a>
                         <?php endif; ?>
@@ -75,53 +89,122 @@ session_start();
             </div> 
         </div>
 
-        <div class="container center d-flex">
+        <div class="container center d-flex flex-row">
+            <?php
+            $index = 0;
+            foreach ($outdoorController->listarOutdoor() as $outdoor):
+                $modalId = "solicitarOutdoorModal-" . $index; // Identificador único para cada modal
+                echo '<div class="card mr-3" style="width: 20rem; margin-left:20px;">';
+                echo '<img class="card-img-top" src="data:image/jpeg;base64,' . base64_encode($outdoor->getImagem()) . '" alt="card img cap">';
+                echo '<div class="card-body">';
+                echo '<h5 class="card-title">' . $outdoor->getTipoOutdoor() . '</h5>';
+                echo '<p class="card-text"><span class="currency">Kz </span>' . $outdoor->getPreco() . '</p>';
+                echo '<p class="card-text"><span class="text">Estado: </span>' . $outdoor->getEstado() . '</p>';
 
-            <div class="card" style="width: 20rem;">
-                <img class="card-img-top" src="../content/images/teste.jpg" alt="Card image cap">
-                <div class="card-body">
-                    <h5 class="card-title">Placas Luminosas</h5>
-                    <p class="card-text">Kzs 20,000</p>
-                    <a href="#" class="btn btn-success">Solicitar</a>
+                // Verifica se o cliente está logado
+                if ($isLoggedIn) {
+                    echo '<a href="#" data-target="#' . $modalId . '" class="btn btn-success">Solicitar</a>';
+                } else {
+                    echo '<a href="../view/LoginView.php" class="btn btn-success">Solicitar</a>';
+                }
+
+                echo '</div>';
+                echo '</div>';
+
+                // Modal correspondente para cada card
+                echo '<div class="modal fade" id="' . $modalId . '" tabindex="-1" role="dialog">';
+                echo '<div class="modal-dialog modal-dialog-centered" role="document">';
+                echo '<div class="modal-content">';
+                echo '<div class="modal-header justify-content-center">';
+                echo '<h5>Solicitar um Outdoor</h5>';
+                echo '</div>';
+                echo '<div class="modal-body">';
+
+                echo '<form method="POST">';
+                echo '<table class="table table-bordered table-responsive">';
+                echo '<br/>';
+
+                echo '<tr>';
+                echo '<td>';
+                echo '<label for="tipoOutdoor" class="form-control">Tipo de Outdoor</label>';
+                echo '</td>';
+                echo '<td>';
+                echo '<label name="tipoOutdoor" class="form-control">' . $outdoor->getTipoOutdoor() . '</label>';
+                echo '</td>';
+                echo '</tr>';
+
+                echo '<tr>';
+                echo '<td>';
+                echo '<label for="provincia" class="form-control">Provincia</label>';
+                echo '</td>';
+                echo '<td>';
+                echo '<label name="provincia" class="form-control">' . $outdoor->getProvincia() . '</label>';
+                echo '</td>';
+                echo '</tr>';
+
+                echo '<tr>';
+                echo '<td>';
+                echo '<label for="municipio" class="form-control">Municipio</label>';
+                echo '</td>';
+                echo '<td>';
+                echo '<label name="municipio" class="form-control">' . $outdoor->getMunicipio() . '</label>';
+                echo '</td>';
+                echo '</tr>';
+
+                echo '<tr>';
+                echo '<td>';
+                echo '<label for="comuna" class="form-control">Comuna</label>';
+                echo '</td>';
+                echo '<td>';
+                echo '<label name="comuna" class="form-control">' . $outdoor->getComuna() . '</label>';
+                echo '</td>';
+                echo '</tr>';
+
+                echo '<tr>';
+                echo '<td>';
+                echo '<label for="dataInicio" class="form-control">Data Inicio</label>';
+                echo '</td>';
+                echo '<td>';
+                echo '<input type="date" name="dataInicio" class="form-control" >';
+                echo '</td>';
+                echo '</tr>';
+
+                echo '<tr>';
+                echo '<td>';
+                echo '<label for="dataFim" class="form-control">Data Fim</label>';
+                echo '</td>';
+                echo '<td>';
+                echo '<input type="date" name="dataFim" class="form-control" >';
+                echo '</td>';
+                echo '</tr>';
+
+                echo '</table>';
+                echo '<button type="submit" class="btn btn-success" name="add_admin">Confirmar</button>';
+                echo '</form>';
+
+                echo '</div>';
+                echo '<div class="modal-footer">';
+                echo '<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>';
+                echo '</div>';
+                echo '</div>';
+                echo '</div>';
+                echo '</div>';
+                $index++;
+            endforeach;
+            ?>
+        </div>
+
+        <div class="modal" id="' . $modalId . '" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <h5>Modal</h5>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success">Registrar</button>
+                    </div>
                 </div>
             </div>
-
-            <div class="card" style="width: 20rem; margin-left: 20px;">
-                <img class="card-img-top" src="../content/images/teste.jpg" alt="Card image cap">
-                <div class="card-body">
-                    <h5 class="card-title">Placas Nao Luminosas</h5>
-                    <p class="card-text">Kzs 20,000</p>
-                    <a href="#" class="btn btn-success">Solicitar</a>
-                </div>
-            </div>
-
-            <div class="card" style="width: 20rem; margin-left: 20px;">
-                <img class="card-img-top" src="../content/images/teste.jpg" alt="Card image cap">
-                <div class="card-body">
-                    <h5 class="card-title">Lampoles</h5>
-                    <p class="card-text">Kzs 20,000</p>
-                    <a href="#" class="btn btn-success">Solicitar</a>
-                </div>
-            </div>
-
-            <div class="card " style="width: 20rem; margin-left: 20px;">
-                <img class="card-img-top" src="../content/images/teste.jpg" alt="Card image cap">
-                <div class="card-body card-spacing">
-                    <h5 class="card-title">Placas Indicativas</h5>
-                    <p class="card-text">Kzs 20,000</p>
-                    <a href="#" class="btn btn-success">Solicitar</a>
-                </div>
-            </div>
-
-            <div class="card" style="width: 20rem; margin-left: 20px;">
-                <img class="card-img-top" src="../content/images/teste.jpg" alt="Card image cap">
-                <div class="card-body">
-                    <h5 class="card-title">Faixadas</h5>
-                    <p class="card-text">Kzs 20,000</p>
-                    <a href="#" class="btn btn-success">Solicitar</a>
-                </div>
-            </div>
-
         </div>
 
         <!-- Modal para a tela de adicionar um User -->
@@ -177,16 +260,15 @@ session_start();
 
                                 <tr>
                                     <td>
-
-                                        <select name="tipoCliente" class="form-control" required>
-                                            <option>-- Tipo de CLiente --</option>
+                                        <select name="tipoCliente" id="tipoCliente" class="form-control" required>
+                                            <option>-- Tipo de Cliente --</option>
                                             <option value="Particular">Particular</option>
                                             <option value="Empresa">Empresa</option>
                                         </select> 
                                     </td>
 
+                                    <td><input type="text" name="atividadeEmpresa" id="atividadeEmpresa" class="form-control" placeholder="Atividade da Empresa" <?php echo $tipoCliente === 'Particular' ? 'disabled' : ''; ?>></td>
 
-                                    <td><input type="text" name="atividadeEmpresa" class="form-control" placeholder="Atividade da Empresa" required></td>
 
                                 </tr>
 
@@ -197,7 +279,12 @@ session_start();
                                 </tr>
 
                                 <tr>
-                                    <td><input type="text" name="nacionalidade" class="form-control" placeholder="Nacionalidade" required></td>
+                                    <td>
+                                        <select name="nacionalidade" class="form-control" required>
+                                            <option>-- Nacionalidade --</option>
+                                            <option value="Angolano(a)">Angolano(a)</option>
+                                        </select>
+                                    </td>
                                 </tr>
 
                             </table> 
@@ -240,9 +327,18 @@ session_start();
 
                             $cliente->setNacionalidade($nacionalidade);
                             $cliente->setTipoCliente($tipoCliente);
-                            $cliente->setAtividadeEmpresa($atividadeEmpresa);
+
+                            if ($tipoCliente === 'Particular') {
+                                $atividadeEmpresa = null;
+                                $cliente->setAtividadeEmpresa($atividadeEmpresa);
+                            } else {
+
+                                $cliente->setAtividadeEmpresa($atividadeEmpresa);
+                            }
 
                             $adminController->addClient($cliente);
+
+                            exit();
 
                             echo "<meta http-equiv=\"refresh\" content=\"0;\">";
                         }
@@ -251,14 +347,44 @@ session_start();
                 </div>
             </div>
         </div> 
+        
+        <div class="modal" id="consultarOutdoorModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <h5>Modal</h5>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success">Registrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="modal" id="carregarPagamentoModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <h5>Modal</h5>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success">Registrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
 
         <footer class="footer">
             <p>@2023 author Helpidio Mateus. All Rights Reserved.</p>
         </footer>
 
+        <script src="../scripts/jquery/jquery.min.js"></script>
         <script src="../scripts/bootstrap/css/bootstrap.min.js"></script>
         <script src="../scripts/custom/cliente.js"></script>
+        <script src="../scripts/custom/outdoor.js"></script>
         <script src="../scripts/custom/localidade.js"></script>
+        <script src="../scripts/custom/alugarOutdoor.js"></script>
+        <script src="../scripts/custom/hideAtividadeEmpresa.js"></script>
     </body>
 </html>
