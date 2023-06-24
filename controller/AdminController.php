@@ -18,11 +18,11 @@ class AdminController {
     }
 
     public function inserirUser(User $user) {
-        
+
         $this->adminService->createUser($user);
     }
-    
-    public function addClient(Cliente $cliente){
+
+    public function addClient(Cliente $cliente) {
         $this->adminService->insertClient($cliente);
     }
 
@@ -34,14 +34,16 @@ class AdminController {
         $this->adminService->deletarUser($id);
     }
 
+    public function showCliente() {
+        return $this->adminService->listCliente();
+    }
+
     public function entrar($email, $password) {
         $user = $this->adminService->loginUser($email, $password);
         if ($user) {
             $tipo = $user->getTipo();
-
             session_start();
             $_SESSION['tipo'] = $tipo;
-
             switch ($tipo) {
                 case 'admin':
                     header('Location: ../view/AdminView.php');
@@ -58,7 +60,6 @@ class AdminController {
             }
         } else {
             echo '<span style="color: red; display: block; text-align: center;">Email ou Senha Incorreta</span>';
-
         }
     }
 

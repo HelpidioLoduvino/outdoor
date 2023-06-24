@@ -36,4 +36,37 @@ class OutdoorService implements IOutdoorService {
         }
     }
 
+    public function solicitarOutdoor(AlugarOutdoor $alugarOutdoor) {
+        try {
+            return $this->outdoorRepository->alugarOutdoor($alugarOutdoor);
+        } catch (Exception $ex) {
+            echo "An error occurred while: " . $ex->getMessage();
+            return false;
+        }
+    }
+
+    public function listOutdoorAlugado() {
+        try {
+            return $this->outdoorRepository->listarOutdoorAlugado();
+        } catch (Exception $ex) {
+            echo "An error occurred while: " . $ex->getMessage();
+        }
+    }
+
+    public function updateOutdoorState($outdoorId, $estado) {
+        try {
+            return $this->outdoorRepository->atualizarEstadoOutdoor($outdoorId, $estado);
+        } catch (Exception $ex) {
+            echo "An error occurred while: " . $ex->getMessage();
+        }
+    }
+
+    public function deletarOutdoorAlugado($id) {
+        try {
+            $this->outdoorRepository->apagarOutdoorAlugado($id);
+        } catch (Exception $ex) {
+            echo "An error occurred while: " . $ex->getMessage();
+        }
+    }
+
 }

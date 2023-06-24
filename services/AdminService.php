@@ -13,17 +13,16 @@ class AdminService implements IAdminService {
 
     public function createUser(User $user) {
         try {
-            
+
             $existingUser = $this->adminRepository->getUserByEmailOrUsername($user->getEmail(), $user->getUsername());
             if ($existingUser) {
                 return false;
             }
-            
+
             return $this->adminRepository->registrarUser($user);
-            
         } catch (Exception $ex) {
             echo "An error occurred while: " . $ex->getMessage();
-            return false; 
+            return false;
         }
     }
 
@@ -54,10 +53,17 @@ class AdminService implements IAdminService {
     public function insertClient(Cliente $cliente) {
         try {
             return $this->adminRepository->inserirCliente($cliente);
-            
         } catch (Exception $ex) {
             echo "An error occurred while: " . $ex->getMessage();
-            return false; 
+            return false;
+        }
+    }
+
+    public function listCliente() {
+        try {
+            return $this->adminRepository->listarCliente();
+        } catch (Exception $ex) {
+            echo "An error occurred while: " . $ex->getMessage();
         }
     }
 

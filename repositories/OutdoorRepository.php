@@ -56,4 +56,55 @@ class OutdoorRepository implements IOutdoorRepository {
         $stmt->execute();
     }
 
+    public function alugarOutdoor(AlugarOutdoor $alugarOutdoor) {
+        try {
+            $query_alugarOutdoor = 'INSERT INTO alugar_outdoor (outdoor_id, dataInicio, dataFim) VALUES (:outdoor_id, :dataInicio, :dataFim)';
+            $stmt_alugarOutdoor = Db::getConn()->prepare($query_alugarOutdoor);
+            $stmt_alugarOutdoor->bindParam(':outdoor_id', $alugarOutdoor->getId());
+            $stmt_alugarOutdoor->bindParam(':dataInicio', $alugarOutdoor->getDataInicio());
+            $stmt_alugarOutdoor->bindParam(':dataFim', $alugarOutdoor->getDataFim());
+            $stmt_alugarOutdoor->execute();
+            return true;
+        } catch (PDOException $e) {
+            echo $e->getMessage();
+            return false;
+        }
+    }
+
+    public function listarOutdoorAlugado() {
+        $query = "SELECT a.outdoor_id, o.tipoOutdoor, o.preco, a.dataInicio, a.dataFim FROM alugar_outdoor a INNER JOIN outdoors o ON a.outdoor_id = o.id";
+        $stmt = Db::getConn()->prepare($query);
+        $stmt->execute();
+
+        $outdoors = array();
+
+        while ($resultado = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+            $alugar_outdoor = new AlugarOutdoor();
+            $alugar_outdoor->setId($resultado["outdoor_id"]);
+            $alugar_outdoor->setTipoOutdoor($resultado["tipoOutdoor"]);
+            $alugar_outdoor->setPreco($resultado["preco"]);
+            $alugar_outdoor->setDataInicio($resultado["dataInicio"]);
+            $alugar_outdoor->setDataFim($resultado["dataFim"]);
+
+            $outdoors[] = $alugar_outdoor;
+        }
+
+        return $outdoors;
+    }
+
+    public function atualizarEstadoOutdoor($outdoorId, $estado) {
+        $query = "UPDATE outdoors SET estado = :estado WHERE id = :outdoorId";
+        $stmt = Db::getConn()->prepare($query);
+        $stmt->bindValue(':estado', $estado);
+        $stmt->bindValue(':outdoorId', $outdoorId);
+        $stmt->execute();
+    }
+
+    public function apagarOutdoorAlugado($id) {
+        $query = 'DELETE FROM alugar_outdoor WHERE outdoor_id = :id';
+        $stmt = Db::getConn()->prepare($query);
+        $stmt->bindParam(':id', $id);
+        $stmt->execute();
+    }
+
 }

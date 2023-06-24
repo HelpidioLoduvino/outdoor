@@ -34,11 +34,7 @@ session_start();
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link" href="#" data-target="#listAdminModal">Listar Admin</a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" data-target="#listManagerModal">Listar Gestor</a>
+                        <a class="nav-link" href="#" data-target="#listAdminModal">Listar Users</a>
                     </li>
 
                     <?php if ($isLoggedIn): ?>
@@ -113,6 +109,7 @@ session_start();
                         if (isset($_POST["add_admin"])) {
 
                             $user = new User();
+                            
                             $tipo = filter_input(INPUT_POST, 'tipo', FILTER_SANITIZE_STRING);
                             $nome = filter_input(INPUT_POST, 'nome', FILTER_SANITIZE_STRING);
                             $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
@@ -123,7 +120,6 @@ session_start();
                             $contacto = filter_input(INPUT_POST, 'contacto', FILTER_SANITIZE_STRING);
                             $username = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_STRING);
                             $password = filter_input(INPUT_POST, 'password', FILTER_SANITIZE_STRING);
-                            $confirmPassword = filter_input(INPUT_POST, 'confirmPassword', FILTER_SANITIZE_STRING);
 
                             $user->setTipo($tipo);
                             $user->setNome($nome);
@@ -135,8 +131,6 @@ session_start();
                             $user->setContacto($contacto);
                             $user->setUsername($username);
                             $user->setPassword($password);
-                            $user->setConfirmPassword($confirmPassword);
-
                             $adminController->inserirUser($user);
                             echo "<meta http-equiv=\"refresh\" content=\"0;\">";
                         }
@@ -201,10 +195,10 @@ session_start();
                                     <td><input type="text" name="confirm_password" class="form-control" placeholder="Confirm Password" ></td>
                                 </tr>
                             </table> 
-                            <button type="submit" class="btn btn-success" name="add_admin">Registrar</button>
+                            <button type="submit" class="btn btn-success" name="add_gestor">Registrar</button>
                         </form>
                         <?php
-                        if (isset($_POST["add_admin"])) {
+                        if (isset($_POST["add_gestor"])) {
                             $user = new User();
 
                             $tipo = filter_input(INPUT_POST, 'tipo', FILTER_SANITIZE_STRING);
@@ -239,27 +233,61 @@ session_start();
 
         <!-- Modal para a tela de validar um User -->
         <div class="modal" id="validateUserModal" tabindex="-1" role="dialog">
-            <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
                 <div class="modal-content">
-                    <div class="modal-body">
-                        <i class="fas fa-user navbar-toggler" id="taxi-icon"></i>
-                        <form method="POST">
-                            <div class="row">
-                                <div class="col">
-                                    <input type="text" class="form-control" placeholder="First name">
-                                </div>
-                                <div class="col">
-                                    <input type="text" class="form-control" placeholder="Last name">
-                                </div>
-                            </div>
-                        </form>
+                    <div class="modal-header justify-content-center">
+                        <h5>Ativar Conta Cliente</h5>
                     </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-success">Add</button>
+                    <div class="modal-body">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">id</th>
+                                        <th scope="col">Username</th>
+                                        <th scope="col">Email</th>
+                                        <th scope="col">Contacto</th>
+                                        <th scope="col">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php
+                                    foreach ($adminController->showCliente() as $user) {
+                                        echo "<tr>";
+                                        echo "<td>" . $user->getId() . "</td>";
+                                        echo "<td>" . $user->getUsername() . "</td>";
+                                        echo "<td>" . $user->getEmail() . "</td>";
+                                        echo "<td>" . $user->getContacto() . "</td>";
+                                        echo "<td>";
+                                        echo "<form method='POST'>";
+                                        echo "<input type='hidden' value='" . $user->getId() . "' name='userId'>";
+                                        echo "<input type='submit' name='ativar_conta' class='btn btn-success' value='Ativar'></input>";
+                                        echo "</form>";
+                                        echo "</td>";
+                                        echo "</tr>";
+
+                                        if (isset($_POST['ativar_conta'])) {
+                                            $clientId = filter_input(INPUT_POST, 'userId', FILTER_SANITIZE_NUMBER_INT);
+                                            $cliente = $adminController->getClienteById($clientId);
+
+                                            if ($cliente) {
+                                                $cliente->setEstado('Ativado');
+                                                $adminController->atualizarCliente($cliente);
+                                            }
+
+                                            echo "<meta http-equiv=\"refresh\" content=\"0;\">";
+                                        }
+                                    }
+                                    ?>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div> 
+        </div>
+
+
 
         <!-- Modal para a tela de listar um Admin -->
         <div class="modal" id="listAdminModal" tabindex="-1" role="dialog">
@@ -274,6 +302,7 @@ session_start();
                                 <thead>
                                     <tr>
                                         <th scope="col">id</th>
+                                        <th scope="col">Tipo</th>
                                         <th scope="col">Username</th>
                                         <th scope="col">Email</th>
                                         <th scope="col">Comuna</th>
@@ -281,7 +310,6 @@ session_start();
                                         <th scope="col">Provincia</th>
                                         <th scope="col">Morada</th>
                                         <th scope="col">Contacto</th>
-                                        <th scope="col">Editar</th>
                                         <th scope="col">Remover</th>
                                     </tr>
                                 </thead>
@@ -290,6 +318,7 @@ session_start();
                                     foreach ($adminController->listarAdmin() as $user):
                                         echo "<tr>";
                                         echo "<td>" . $user->getId() . "</td>";
+                                        echo "<td>" . $user->getTipo() . "</td>";
                                         echo "<td>" . $user->getUsername() . "</td>";
                                         echo "<td>" . $user->getEmail() . "</td>";
                                         echo "<td>" . $user->getComuna() . "</td>";
@@ -297,10 +326,9 @@ session_start();
                                         echo "<td>" . $user->getProvincia() . "</td>";
                                         echo "<td>" . $user->getMorada() . "</td>";
                                         echo "<td>" . $user->getContacto() . "</td>";
-                                        echo '<td><a href="#" data-bs-target="#editarUserModal" name="editar" class="btn btn-outline-primary">Editar</a></td>';
                                         echo"<form method='POST'>";
-                                        echo "<input type='text' hidden value=" . $user->getId() . " name='id_value' class='form-control'>";
-                                        echo '<td><input type="submit" name="userId" class="btn btn-danger" value="Excluir"></input>';
+                                        echo "<input type='text' hidden value=" . $user->getId() . " name='userId' class='form-control'>";
+                                        echo '<td><input type="submit" name="delete_user" class="btn btn-danger" value="Excluir"></input>';
                                         echo'</form>';
                                         echo "</tr>";
                                     endforeach;
@@ -308,8 +336,8 @@ session_start();
                                 </tbody>
                             </table>
                             <?php
-                            if (isset($_POST['userId'])) {
-                                $adminController->apagarUser($_POST['id_value']);
+                            if (isset($_POST['delete_user'])) {
+                                $adminController->apagarUser($_POST['userId']);
                                 echo "<meta http-equiv=\"refresh\" content=\"0;\">";
                             }
                             ?>
@@ -319,7 +347,7 @@ session_start();
             </div>
         </div> 
 
-        <!-- Modal para a tela de listar um Gestor -->
+
         <div class="modal" id="listManagerModal" tabindex="-1" role="dialog">
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">

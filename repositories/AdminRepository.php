@@ -40,7 +40,14 @@ class AdminRepository implements IAdminRepository {
             $userObj = new User();
             $userObj->setId($user['id']);
             $userObj->setTipo($user['tipo']);
+            $userObj->setNome($user['nome']);
             $userObj->setEmail($user['email']);
+            $userObj->setProvincia($user['provincia']);
+            $userObj->setComuna($user['comuna']);
+            $userObj->setMunicipio($user['municipio']);
+            $userObj->setMorada($user['morada']);
+            $userObj->setContacto($user['contacto']);
+            $userObj->setUsername($user['username']);
             $userObj->setPassword($user['password']);
 
             return $userObj;
@@ -50,7 +57,7 @@ class AdminRepository implements IAdminRepository {
     }
 
     public function listarAdmin() {
-        $query = "SELECT * FROM users WHERE tipo = 'admin'";
+        $query = "SELECT * FROM users";
         $stmt = Db::getConn()->prepare($query);
         $stmt->execute();
 
@@ -60,6 +67,7 @@ class AdminRepository implements IAdminRepository {
 
             $user = new User();
             $user->setId($resultado["id"]);
+            $user->setTipo($resultado["tipo"]);
             $user->setEmail($resultado["email"]);
             $user->setComuna($resultado["comuna"]);
             $user->setMunicipio($resultado["municipio"]);
@@ -99,12 +107,34 @@ class AdminRepository implements IAdminRepository {
         $resultado = $stmt->fetch(\PDO::FETCH_ASSOC);
         $ultimoId = $resultado['ultimo_id'];
 
-        $query_cliente = 'INSERT INTO clientes(user_id, nacionalidade, tipoCliente, atividadeEmpresa) VALUES (:user_id, :nacionalidade, :tipoCliente, :atividadeEmpresa)';
+        $query_cliente = 'INSERT INTO clientes(user_id, nacionalidade, tipoCliente, atividadeEmpresa, estado) VALUES (:user_id, :nacionalidade, :tipoCliente, :atividadeEmpresa, :estado)';
         $stmt_cliente = Db::getConn()->prepare($query_cliente);
         $stmt_cliente->bindParam(':user_id', $ultimoId);
         $stmt_cliente->bindParam(':nacionalidade', $cliente->getNacionalidade());
         $stmt_cliente->bindParam(':tipoCliente', $cliente->getTipoCliente());
         $stmt_cliente->bindParam(':atividadeEmpresa', $cliente->getAtividadeEmpresa());
+        $stmt_cliente->bindParam(':estado', $cliente->getEstado());
         $stmt_cliente->execute();
     }
+
+    public function listarCliente() {
+        $query = "SELECT * FROM users WHERE tipo='cliente'";
+        $stmt = Db::getConn()->prepare($query);
+        $stmt->execute();
+
+        $allUsers = array();
+
+        while ($resultado = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+
+            $user = new User();
+            $user->setId($resultado["id"]);
+            $user->setEmail($resultado["email"]);
+            $user->setContacto($resultado["contacto"]);
+            $user->setUsername($resultado["username"]);
+            $allUsers[] = $user;
+        }
+
+        return $allUsers;
+    }
+
 }

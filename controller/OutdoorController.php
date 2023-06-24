@@ -3,6 +3,7 @@
 require_once '/Applications/XAMPP/xamppfiles/htdocs/outdoor-angola/services/OutdoorService.php';
 require_once '/Applications/XAMPP/xamppfiles/htdocs/outdoor-angola/repositories/OutdoorRepository.php';
 require_once '/Applications/XAMPP/xamppfiles/htdocs/outdoor-angola/model/Outdoor.php';
+require_once '/Applications/XAMPP/xamppfiles/htdocs/outdoor-angola/model/AlugarOutdoor.php';
 
 class OutdoorController {
     private $outdoorService = NULL;
@@ -15,12 +16,28 @@ class OutdoorController {
         $this->outdoorService->insertOutdoor($outdoor);
     }
     
-    public function listarOutdoor(){
+    public function showOutdoor(){
         return $this->outdoorService->listOutdoor();
     }
     
     public function apagarOutdoor($id){
         $this->outdoorService->deletarOutdoor($id);
+    }
+    
+    public function alugarOutdoor(AlugarOutdoor $alugarOutdoor){
+        $this->outdoorService->solicitarOutdoor($alugarOutdoor);
+    }
+    
+    public function showOutdoorAlugado(){
+        return $this->outdoorService->listOutdoorAlugado();
+    }
+    
+    public function updateOutdoorEstado($outdoorId, $estado){
+        $this->outdoorService->updateOutdoorState($outdoorId, $estado);
+    }
+    
+    public function deleteOutdoorAlugado($id){
+        $this->outdoorService->deletarOutdoorAlugado($id);
     }
 }
 

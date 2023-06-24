@@ -2,10 +2,10 @@
 
 
 class Cliente extends User {
-    private $user_id;
     private $nacionalidade;
     private $tipoCliente;
     private $atividadeEmpresa;
+    private $estado;
     
     public function getNacionalidade() {
         return $this->nacionalidade;
@@ -19,6 +19,10 @@ class Cliente extends User {
         return $this->atividadeEmpresa;
     }
 
+    public function getEstado() {
+        return $this->estado;
+    }
+
     public function setNacionalidade($nacionalidade): void {
         $this->nacionalidade = $nacionalidade;
     }
@@ -30,11 +34,8 @@ class Cliente extends User {
     public function setAtividadeEmpresa($atividadeEmpresa): void {
         $this->atividadeEmpresa = $atividadeEmpresa;
     }
-    public function getUser_id() {
-        return $this->user_id;
-    }
 
-    public function setUser_id($user_id): void {
-        $this->user_id = $user_id;
-    }
+    public function setEstado($estado): void {
+        $this->estado = $estado;
+    }   
 }

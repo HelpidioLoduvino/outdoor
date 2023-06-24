@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", function () {
     var consultarOutdoorModal = new bootstrap.Modal(document.getElementById("consultarOutdoorModal"));
     
     var carregarPagamentoModal = new bootstrap.Modal(document.getElementById("carregarPagamentoModal"));
-
+    
     document.querySelector("a[data-target='#addClientModal']").addEventListener("click", function () {
         addClientModal.show();
     });
@@ -18,5 +18,5 @@ document.addEventListener("DOMContentLoaded", function () {
     document.querySelector("a[data-target='#carregarPagamentoModal']").addEventListener("click", function () {
         carregarPagamentoModal.show();
     });
-     
+ 
 });

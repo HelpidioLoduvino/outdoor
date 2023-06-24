@@ -75,6 +75,4 @@ class Outdoor {
         $this->imagem = $conteudo;
     }
 
-
-
 }

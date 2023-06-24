@@ -149,17 +149,57 @@ session_start();
 
         <!-- Modal para a tela de adicionar um Gestor -->
         <div class="modal" id="analisarAluguerModal" tabindex="-1" role="dialog">
-            <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-body">
-                        <h5>Modal</h5>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-success">Registrar</button>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">ID Outdoor</th>
+                                        <th scope="col">ID Cliente</th>
+                                        <th scope="col">Username Cliente</th>
+                                        <th scope="col">Tipo de Outdoor</th>
+                                        <th scope="col">Preco</th>
+                                        <th scope="col">Data de Inicio</th>
+                                        <th scope="col">Data Do Fim</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php
+                                    $total = 0;
+                                    foreach ($outdoorController->showOutdoorAlugado() as $outdoor) {
+                                        echo "<tr>";
+                                        echo "<td>" . $outdoor->getId() . "</td>";
+                                        echo "<td>Por Fazer</td>";
+                                        echo "<td>Por Fazer</td>";
+                                        echo "<td>" . $outdoor->getTipoOutdoor() . "</td>";
+                                        echo "<td>" . $outdoor->getPreco() . "</td>";
+                                        echo "<td>" . $outdoor->getDataInicio() . "</td>";
+                                        echo "<td>" . $outdoor->getDataFim() . "</td>";
+                                        echo "</tr>";
+
+                                        $total += $outdoor->getPreco();
+                                        if (isset($_POST['validar_pagamento'])) {
+                                            $outdoorId = $outdoor->getId();
+                                            $outdoorController->updateOutdoorEstado($outdoorId, 'Ocupado');
+                                            echo "<meta http-equiv=\"refresh\" content=\"0;\">";
+                                        }
+                                    }
+                                    echo '<th scope="row">Total a Pagar:</th>';
+                                    echo '<td colspan="4"><input type="hidden" name="precoTotal" value="' . $total . '"><span class="currency">Kz </span>' . $total . '<span class="currency">.000,00</span></td>';
+                                    echo "<form method='POST'>";
+                                    echo '<td><input type="submit" name="validar_pagamento" class="btn btn-success" value="Validar Pagamento"></input></td>';
+                                    echo '</form>';
+                                    ?>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+
 
         <!-- Modal para a tela de adicionar um Gestor -->
         <div class="modal" id="gerirOutdoorModal" tabindex="-1" role="dialog">
@@ -184,7 +224,7 @@ session_start();
                                 </thead>
                                 <tbody>
                                     <?php
-                                    foreach ($outdoorController->listarOutdoor() as $outdoor):
+                                    foreach ($outdoorController->showOutdoor() as $outdoor):
                                         echo "<tr>";
                                         echo "<td>" . $outdoor->getId() . "</td>";
                                         echo "<td>" . $outdoor->getTipoOutdoor() . "</td>";

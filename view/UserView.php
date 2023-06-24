@@ -5,6 +5,7 @@ require_once '/Applications/XAMPP/xamppfiles/htdocs/outdoor-angola/controller/Lo
 require_once '/Applications/XAMPP/xamppfiles/htdocs/outdoor-angola/model/User.php';
 require_once '/Applications/XAMPP/xamppfiles/htdocs/outdoor-angola/model/Cliente.php';
 require_once '/Applications/XAMPP/xamppfiles/htdocs/outdoor-angola/model/Outdoor.php';
+require_once '/Applications/XAMPP/xamppfiles/htdocs/outdoor-angola/model/AlugarOutdoor.php';
 session_start();
 ?>
 <html>
@@ -38,7 +39,7 @@ session_start();
                             <a class="nav-link" href="../view/LoginView.php">Consultar Outdoor</a>
                         <?php endif; ?>
                     </li>
-                    
+
                     <li class="nav-item ">
                         <?php if ($isLoggedIn): ?>
                             <a class="nav-link" href="#" data-target="#carregarPagamentoModal">Carregar Pagamento</a>
@@ -47,7 +48,8 @@ session_start();
                         <?php endif; ?>
                     </li>
 
-                    <li class="nav-item ml-auto" style="margin-left: 500px;">
+
+                    <li class="nav-item ml-auto" style="margin-left: 200px;">
                         <?php if (!$isLoggedIn): ?>
                             <a class="nav-link" href="../view/LoginView.php">Login</a>
                         <?php endif; ?>
@@ -92,7 +94,7 @@ session_start();
         <div class="container center d-flex flex-row">
             <?php
             $index = 0;
-            foreach ($outdoorController->listarOutdoor() as $outdoor):
+            foreach ($outdoorController->showOutdoor() as $outdoor):
                 $modalId = "solicitarOutdoorModal-" . $index; // Identificador único para cada modal
                 echo '<div class="card mr-3" style="width: 20rem; margin-left:20px;">';
                 echo '<img class="card-img-top" src="data:image/jpeg;base64,' . base64_encode($outdoor->getImagem()) . '" alt="card img cap">';
@@ -102,16 +104,18 @@ session_start();
                 echo '<p class="card-text"><span class="text">Estado: </span>' . $outdoor->getEstado() . '</p>';
 
                 // Verifica se o cliente está logado
-                if ($isLoggedIn) {
-                    echo '<a href="#" data-target="#' . $modalId . '" class="btn btn-success">Solicitar</a>';
-                } else {
-                    echo '<a href="../view/LoginView.php" class="btn btn-success">Solicitar</a>';
+                if ($outdoor->getEstado() !== 'Ocupado' && $outdoor->getEstado() !== 'Por Validar Pagamento' && $outdoor->getEstado() !== 'A aguardar Pagamento') {
+                    if ($isLoggedIn) {
+                        echo '<a href="#" data-target="#' . $modalId . '" class="btn btn-success" alugar_outdoorId="' . $outdoor->getId() . '">Solicitar</a>';
+                    } else {
+                        echo '<a href="../view/LoginView.php" class="btn btn-success">Solicitar</a>';
+                    }
                 }
 
                 echo '</div>';
                 echo '</div>';
 
-                // Modal correspondente para cada card
+                // Modal Para cada Card
                 echo '<div class="modal fade" id="' . $modalId . '" tabindex="-1" role="dialog">';
                 echo '<div class="modal-dialog modal-dialog-centered" role="document">';
                 echo '<div class="modal-content">';
@@ -123,6 +127,8 @@ session_start();
                 echo '<form method="POST">';
                 echo '<table class="table table-bordered table-responsive">';
                 echo '<br/>';
+
+                echo '<input type="hidden" name="outdoorId" value="' . $outdoor->getId() . '" >';
 
                 echo '<tr>';
                 echo '<td>';
@@ -179,7 +185,7 @@ session_start();
                 echo '</tr>';
 
                 echo '</table>';
-                echo '<button type="submit" class="btn btn-success" name="add_admin">Confirmar</button>';
+                echo '<button type="submit" class="btn btn-success" name="alugar_outdoor">Confirmar</button>';
                 echo '</form>';
 
                 echo '</div>';
@@ -192,19 +198,20 @@ session_start();
                 $index++;
             endforeach;
             ?>
-        </div>
-
-        <div class="modal" id="' . $modalId . '" tabindex="-1" role="dialog">
-            <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content">
-                    <div class="modal-body">
-                        <h5>Modal</h5>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-success">Registrar</button>
-                    </div>
-                </div>
-            </div>
+            <?php
+            if (isset($_POST['alugar_outdoor'])) {
+                $alugarOutdoor = new AlugarOutdoor();
+                $dataInicio = filter_input(INPUT_POST, 'dataInicio', FILTER_SANITIZE_SPECIAL_CHARS);
+                $dataFim = filter_input(INPUT_POST, 'dataFim', FILTER_SANITIZE_SPECIAL_CHARS);
+                $outdoorId = filter_input(INPUT_POST, 'outdoorId', FILTER_SANITIZE_NUMBER_INT);
+                $alugarOutdoor->setDataInicio($dataInicio);
+                $alugarOutdoor->setDataFim($dataFim);
+                $alugarOutdoor->setId($outdoorId);
+                $outdoorController->alugarOutdoor($alugarOutdoor);
+                $outdoorController->updateOutdoorEstado($outdoorId, 'A aguardar Pagamento');
+                echo "<meta http-equiv=\"refresh\" content=\"0;\">";
+            }
+            ?>
         </div>
 
         <!-- Modal para a tela de adicionar um User -->
@@ -212,7 +219,7 @@ session_start();
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header justify-content-center">
-                        <h5>Adicionar Admin</h5>
+                        <h5>Adicionar Cliente</h5>
                     </div>
                     <div class="modal-body">
                         <form method="POST">
@@ -220,7 +227,7 @@ session_start();
                                 <br/>
                                 <tr>
                                 <input type="hidden" name="tipo" value="cliente">
-
+                                <input type="hidden" name="estado" value="Por Ativar">
                                 <td><input type="text" name="nome" class="form-control" placeholder="Nome" required></td>
 
                                 <td><input type="text" name="email" class="form-control" placeholder="Email" required></td>
@@ -295,6 +302,7 @@ session_start();
                             $user = new User();
 
                             $tipo = filter_input(INPUT_POST, 'tipo', FILTER_SANITIZE_STRING);
+                            $estado = filter_input(INPUT_POST, 'estado', FILTER_SANITIZE_STRING);
                             $nome = filter_input(INPUT_POST, 'nome', FILTER_SANITIZE_STRING);
                             $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
                             $comuna = filter_input(INPUT_POST, 'comuna', FILTER_SANITIZE_STRING);
@@ -304,7 +312,6 @@ session_start();
                             $contacto = filter_input(INPUT_POST, 'contacto', FILTER_SANITIZE_STRING);
                             $username = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_STRING);
                             $password = filter_input(INPUT_POST, 'password', FILTER_SANITIZE_STRING);
-                            $confirmPassword = filter_input(INPUT_POST, 'confirmPassword', FILTER_SANITIZE_STRING);
                             $nacionalidade = filter_input(INPUT_POST, 'nacionalidade', FILTER_SANITIZE_STRING);
                             $tipoCliente = filter_input(INPUT_POST, 'tipoCliente', FILTER_SANITIZE_STRING);
                             $atividadeEmpresa = filter_input(INPUT_POST, 'atividadeEmpresa', FILTER_SANITIZE_STRING);
@@ -319,14 +326,13 @@ session_start();
                             $user->setContacto($contacto);
                             $user->setUsername($username);
                             $user->setPassword($password);
-                            $user->setConfirmPassword($confirmPassword);
-
                             $adminController->inserirUser($user);
 
                             $cliente = new Cliente();
 
                             $cliente->setNacionalidade($nacionalidade);
                             $cliente->setTipoCliente($tipoCliente);
+                            $cliente->setEstado($estado);
 
                             if ($tipoCliente === 'Particular') {
                                 $atividadeEmpresa = null;
@@ -337,9 +343,6 @@ session_start();
                             }
 
                             $adminController->addClient($cliente);
-
-                            exit();
-
                             echo "<meta http-equiv=\"refresh\" content=\"0;\">";
                         }
                         ?>
@@ -347,28 +350,107 @@ session_start();
                 </div>
             </div>
         </div> 
-        
+
         <div class="modal" id="consultarOutdoorModal" tabindex="-1" role="dialog">
-            <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-body">
-                        <h5>Modal</h5>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-success">Registrar</button>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">id</th>
+                                        <th scope="col">Tipo de Outdoor</th>
+                                        <th scope="col">Preco</th>
+                                        <th scope="col">Data de Inicio</th>
+                                        <th scope="col">Data Do Fim</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php
+                                    $total = 0;
+                                    foreach ($outdoorController->showOutdoorAlugado() as $outdoor):
+                                        echo "<tr>";
+                                        echo "<td>" . $outdoor->getId() . "</td>";
+                                        echo "<td>" . $outdoor->getTipoOutdoor() . "</td>";
+                                        echo "<td>" . $outdoor->getPreco() . "</td>";
+                                        echo "<td>" . $outdoor->getDataInicio() . "</td>";
+                                        echo "<td>" . $outdoor->getDataFim() . "</td>";
+                                        echo "</tr>";
+                                        $total += $outdoor->getPreco();
+                                    endforeach;
+                                    echo '<tr>';
+                                    echo '<th scope="row">Total Pago:</th>';
+                                    echo '<td colspan="4"><span class="currency">Kz </span>' . $total . '<span class="currency">.000,00</span></td>';
+                                    echo '</tr>';
+                                    ?>
+                                </tbody>
+
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        
+
         <div class="modal" id="carregarPagamentoModal" tabindex="-1" role="dialog">
-            <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-body">
-                        <h5>Modal</h5>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-success">Registrar</button>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">id</th>
+                                        <th scope="col">Tipo de Outdoor</th>
+                                        <th scope="col">Preco</th>
+                                        <th scope="col">Data de Inicio</th>
+                                        <th scope="col">Data Do Fim</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php
+                                    $totalPagar = 0;
+                                    foreach ($outdoorController->showOutdoorAlugado() as $outdoor) {
+                                        echo "<tr>";
+                                        echo "<td>" . $outdoor->getId() . "</td>";
+                                        echo "<td>" . $outdoor->getTipoOutdoor() . "</td>";
+                                        echo "<td>" . $outdoor->getPreco() . "</td>";
+                                        echo "<td>" . $outdoor->getDataInicio() . "</td>";
+                                        echo "<td>" . $outdoor->getDataFim() . "</td>";
+                                        echo "<td>";
+                                        echo "<form method='POST'>";
+                                        echo "<input type='hidden' value=" . $outdoor->getId() . " name='outdoorId'>";
+                                        echo "<button type='submit' name='apagar_outdoor' class='btn btn-danger'>Excluir</button>";
+                                        echo "</form>";
+                                        echo "</td>";
+                                        echo "</tr>";
+
+                                        if (isset($_POST['apagar_outdoor'])) {
+                                            $outdoorId = $outdoor->getId();
+                                            $outdoorController->deleteOutdoorAlugado($outdoorId);
+                                            $outdoorController->updateOutdoorEstado($outdoorId, 'Disponivel');
+                                            echo "<meta http-equiv=\"refresh\" content=\"0;\">";
+                                        }
+
+                                        $totalPagar += $outdoor->getPreco();
+
+                                        if (isset($_POST['carregar_pagamento'])) {
+                                            $outdoorId = $outdoor->getId();
+                                            $outdoorController->updateOutdoorEstado($outdoorId, 'Por Validar Pagamento');
+                                            echo "<meta http-equiv=\"refresh\" content=\"0;\">";
+                                        }
+                                    }
+                                    echo '<th scope="row">Total a Pagar:</th>';
+                                    echo '<td colspan="4"><input type="hidden" name="precoTotal" value="' . $totalPagar . '"><span class="currency">Kz </span>' . $total . '<span class="currency">.000,00</span></td>';
+                                    echo "<form method='POST'>";
+                                    echo '<td><input type="submit" name="carregar_pagamento" class="btn btn-success" value="Carregar Pagamento"></input></td>';
+                                    echo '</form>';
+                                    ?>
+
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
