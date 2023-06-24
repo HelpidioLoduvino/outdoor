@@ -8,4 +8,6 @@ interface IAdminRepository {
     public function login($email, $password);
     public function inserirCliente(Cliente $cliente);
     public function listarCliente();
+    public function getUserById($id);
+    public function updateUser(User $user);
 }

@@ -8,4 +8,6 @@ interface IAdminService {
     public function loginUser($email, $password);
     public function insertClient(Cliente $cliente);
     public function listCliente();
+    public function buscarUserId($id);
+    public function editarUser(User $user);
 }

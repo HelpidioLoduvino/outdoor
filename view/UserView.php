@@ -18,7 +18,7 @@ session_start();
     </head>
     <body>
         <?php
-        $isLoggedIn = isset($_SESSION['tipo']) && $_SESSION['tipo'] === 'cliente';
+        $isLoggedIn = isset($_SESSION['cliente']) && $_SESSION['cliente']['tipo'] === 'cliente';
         ?>
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <a class="navbar-brand title" href="#" style="margin-left: 20px;">
@@ -48,6 +48,11 @@ session_start();
                         <?php endif; ?>
                     </li>
 
+                    <?php if ($isLoggedIn): ?>
+                        <li class="nav-item ml-auto">
+                            <a class="nav-link" href="#" data-target="#updateClienteModal">Conta</a>
+                        </li>
+                    <?php endif; ?>
 
                     <li class="nav-item ml-auto" style="margin-left: 200px;">
                         <?php if (!$isLoggedIn): ?>
@@ -456,6 +461,85 @@ session_start();
             </div>
         </div>
 
+        <div class="modal" id="updateClienteModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <?php
+                        $id = $_SESSION['cliente']['id'];
+
+                        if (isset($id)) {
+                            $user = $adminController->getIdUser($id);
+                            echo '
+                                <form method="POST">
+                                    
+                                    <input type="hidden" name="userId" value="' .  $user->getId(). '">
+                                        
+                                    <input type="hidden" name="tipo" value="' .  $user->getTipo() . '">
+                                
+                                    <label for="nome">Nome:</label>
+                                    <input type="text" name="nome" value="' . $user->getNome() . '"><br/><br/>
+
+                                    <label for="email">Email:</label>
+                                    <label name="email">' . $user->getEmail() . '</label><br/><br/>
+                                        
+                                    <label for="username">Username:</label>
+                                    <input type="text" name="username" value="' . $user->getUsername() . '"><br/><br/>
+
+                                    <label for="provincia">Provincia:</label>
+                                    <label name="provincia">' . $user->getProvincia() . '</label><br/><br/>
+
+                                    <label for="municipio">Municipio:</label>
+                                    <label name="municipio">' . $user->getMunicipio() . '</label><br/><br/>
+
+                                    <label for="comuna">Comuna:</label>
+                                    <label name="comuna">' . $user->getComuna(). '</label><br/><br/>
+
+                                    <label for="morada">Morada:</label>
+                                    <input type="text" name="morada" value="' . $user->getMorada() . '"><br/><br/>
+
+                                    <label for="contacto">Contacto:</label>
+                                    <input type="text" name="contacto" value="' . $user->getContacto() . '"><br/><br/>
+
+                                    <button type="submit" class="btn btn-outline-dark" name="editar_cliente">Editar</button>
+                                </form>
+                            ';
+                        }
+                        ?>
+                    </div>
+                    <?php 
+                    if(isset($_POST['editar_cliente'])){
+                        $user = new User();
+                        
+                        $id = filter_input(INPUT_POST, 'userId', FILTER_SANITIZE_NUMBER_INT);
+                        $nome = filter_input(INPUT_POST, 'nome', FILTER_SANITIZE_STRING);
+                        //$email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_STRING);
+                        //$tipo = filter_input(INPUT_POST, 'tipo', FILTER_SANITIZE_STRING);
+                        //$provincia = filter_input(INPUT_POST, 'provincia', FILTER_SANITIZE_STRING);
+                        //$municipio = filter_input(INPUT_POST, 'municipio', FILTER_SANITIZE_STRING);
+                        //$comuna = filter_input(INPUT_POST, 'comuna', FILTER_SANITIZE_STRING);
+                        $morada = filter_input(INPUT_POST, 'morada', FILTER_SANITIZE_STRING);
+                        $contacto = filter_input(INPUT_POST, 'contacto', FILTER_SANITIZE_STRING);
+                        $username = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_STRING);
+                        
+                        $user->setId($id);
+                        $user->setNome($nome);
+                       // $user->setEmail($email);
+                       // $user->setProvincia($provincia);
+                        //$user->setMunicipio($municipio);
+                        //$user->setComuna($comuna);
+                        $user->setMorada($morada);
+                        $user->setContacto($contacto);
+                        $user->setUsername($username);
+                        
+                        $adminController->update($user);
+                        echo "<meta http-equiv=\"refresh\" content=\"0;\">";
+                    }
+                    ?>
+                </div>
+            </div>
+        </div>
+
 
         <footer class="footer">
             <p>@2023 author Helpidio Mateus. All Rights Reserved.</p>
@@ -468,5 +552,6 @@ session_start();
         <script src="../scripts/custom/localidade.js"></script>
         <script src="../scripts/custom/alugarOutdoor.js"></script>
         <script src="../scripts/custom/hideAtividadeEmpresa.js"></script>
+        <script src="../scripts/custom/updateCliente.js"></script>
     </body>
 </html>

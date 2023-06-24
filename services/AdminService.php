@@ -67,4 +67,20 @@ class AdminService implements IAdminService {
         }
     }
 
+    public function buscarUserId($id) {
+        try {
+            return $this->adminRepository->getUserById($id);
+        } catch (Exception $ex) {
+            echo "An error occurred while: " . $ex->getMessage();
+        }
+    }
+
+    public function editarUser(User $user) {
+        try {
+            $this->adminRepository->updateUser($user);
+        } catch (Exception $ex) {
+            echo "An error occurred while: " . $ex->getMessage();
+        }
+    }
+
 }

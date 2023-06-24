@@ -18,5 +18,6 @@ document.addEventListener("DOMContentLoaded", function () {
     document.querySelector("a[data-target='#carregarPagamentoModal']").addEventListener("click", function () {
         carregarPagamentoModal.show();
     });
- 
+    
+    
 });

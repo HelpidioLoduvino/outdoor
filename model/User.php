@@ -13,8 +13,6 @@ class User {
     private $contacto;
     private $username;
     private $password;
-    private $confirmPassword;
-    private $cliente;
 
     public function getId() {
         return $this->id;
@@ -106,18 +104,6 @@ class User {
 
     public function setPassword($password): void {
         $this->password = $password;
-    }
-
-    public function setConfirmPassword($confirmPassword): void {
-        $this->confirmPassword = $confirmPassword;
-    }
-
-    public function getCliente() {
-        return $this->cliente;
-    }
-
-    public function setCliente(Cliente $cliente) {
-        $this->cliente = $cliente;
     }
 
 }

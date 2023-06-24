@@ -49,7 +49,6 @@ class AdminRepository implements IAdminRepository {
             $userObj->setContacto($user['contacto']);
             $userObj->setUsername($user['username']);
             $userObj->setPassword($user['password']);
-
             return $userObj;
         }
 
@@ -135,6 +134,53 @@ class AdminRepository implements IAdminRepository {
         }
 
         return $allUsers;
+    }
+
+    public function getUserById($id) {
+        $query = 'SELECT * FROM users WHERE id = :id';
+        $stmt = Db::getConn()->prepare($query);
+        $stmt->bindParam(':id', $id);
+        $stmt->execute();
+
+        $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        $user = new User();
+
+        $user->setId($resultado["id"]);
+        $user->setTipo($resultado["tipo"]);
+        $user->setEmail($resultado["email"]);
+        $user->setUsername($resultado["username"]);
+        $user->setNome($resultado["nome"]);
+        $user->setProvincia($resultado["provincia"]);
+        $user->setMunicipio($resultado["municipio"]);
+        $user->setComuna($resultado["comuna"]);
+        $user->setMorada($resultado["morada"]);
+        $user->setContacto($resultado["contacto"]);
+        $user->setPassword($resultado["password"]);
+
+        return $user;
+    }
+
+    public function updateUser(User $user) {
+        try {
+            $query = "UPDATE users SET nome = :nome, morada = :morada, contacto = :contacto, username = :username WHERE id = :id";
+            $stmt = Db::getConn()->prepare($query);
+            $stmt->bindParam(':nome', $user->getNome());
+            //$stmt->bindParam(':email', $user->getEmail());
+            //$stmt->bindParam(':tipo', $user->getTipo());
+            //$stmt->bindParam(':provincia', $user->getProvincia());
+            //$stmt->bindParam(':municipio', $user->getMunicipio());
+            //$stmt->bindParam(':comuna', $user->getComuna());
+            $stmt->bindParam(':morada', $user->getMorada());
+            $stmt->bindParam(':contacto', $user->getContacto());
+            $stmt->bindParam(':username', $user->getUsername());
+            $stmt->bindParam(':id', $user->getId());
+            $stmt->execute();
+            return true;
+        } catch (PDOException $e) {
+            echo $e->getMessage();
+            return false;
+        }
     }
 
 }

@@ -37,6 +37,14 @@ class AdminController {
     public function showCliente() {
         return $this->adminService->listCliente();
     }
+    
+    public function getIdUser($id){
+        return $this->adminService->buscarUserId($id);
+    }
+    
+    public function update(User $user){
+        $this->adminService->editarUser($user);
+    }
 
     public function entrar($email, $password) {
         $user = $this->adminService->loginUser($email, $password);
@@ -52,6 +60,18 @@ class AdminController {
                     header('Location: ../view/GestorView.php');
                     exit;
                 case 'cliente':
+                    $_SESSION['cliente'] = array(
+                        'id' => $user->getId(),
+                        'tipo' => $tipo,
+                        'nome' => $user->getNome(),
+                        'email' => $user->getEmail(),
+                        'provincia' => $user->getProvincia(),
+                        'municipio' => $user->getMunicipio(),
+                        'comuna' => $user->getComuna(),
+                        'morada' => $user->getMorada(),
+                        'contacto' => $user->getContacto(),
+                        'username' => $user->getUsername(),
+                    );
                     header('Location: ../view/UserView.php');
                     exit;
                 default:
@@ -62,7 +82,6 @@ class AdminController {
             echo '<span style="color: red; display: block; text-align: center;">Email ou Senha Incorreta</span>';
         }
     }
-
 }
 
 $adminRepository = new AdminRepository();
