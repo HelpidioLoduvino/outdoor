@@ -109,7 +109,7 @@ session_start();
                         if (isset($_POST["add_admin"])) {
 
                             $user = new User();
-                            
+
                             $tipo = filter_input(INPUT_POST, 'tipo', FILTER_SANITIZE_STRING);
                             $nome = filter_input(INPUT_POST, 'nome', FILTER_SANITIZE_STRING);
                             $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
@@ -258,29 +258,41 @@ session_start();
                                         echo "<td>" . $user->getUsername() . "</td>";
                                         echo "<td>" . $user->getEmail() . "</td>";
                                         echo "<td>" . $user->getContacto() . "</td>";
-                                        echo "<td>";
+
+                                        $estado = $adminController->getClienteEstado($user->getId());
+
+                                        echo '<td>';
                                         echo "<form method='POST'>";
                                         echo "<input type='hidden' value='" . $user->getId() . "' name='userId'>";
-                                        echo "<input type='submit' name='ativar_conta' class='btn btn-success' value='Ativar'></input>";
+
+                                        if ($estado == 'Aprovado') {
+                                            echo "<input type='submit' name='bloquear_conta' class='btn btn-danger' value='Bloquear'></input>";
+                                        } else {
+                                            echo "<input type='submit' name='ativar_conta' class='btn btn-success' value='Ativar'></input>";
+                                        }
+
                                         echo "</form>";
                                         echo "</td>";
                                         echo "</tr>";
-
-                                        if (isset($_POST['ativar_conta'])) {
-                                            $clientId = filter_input(INPUT_POST, 'userId', FILTER_SANITIZE_NUMBER_INT);
-                                            $cliente = $adminController->getClienteById($clientId);
-
-                                            if ($cliente) {
-                                                $cliente->setEstado('Ativado');
-                                                $adminController->atualizarCliente($cliente);
-                                            }
-
-                                            echo "<meta http-equiv=\"refresh\" content=\"0;\">";
-                                        }
                                     }
                                     ?>
                                 </tbody>
                             </table>
+                            <?php
+                            if (isset($_POST['ativar_conta'])) {
+                                $clientId = filter_input(INPUT_POST, 'userId', FILTER_SANITIZE_NUMBER_INT);
+                                $adminController->updateClienteEstado($clientId, 'Aprovado');
+                                echo "<meta http-equiv=\"refresh\" content=\"0;\">";
+                            }
+                            ?>
+
+                            <?php
+                            if (isset($_POST['bloquear_conta'])) {
+                                $clientId = filter_input(INPUT_POST, 'userId', FILTER_SANITIZE_NUMBER_INT);
+                                $adminController->updateClienteEstado($clientId, 'Bloqueado');
+                                echo "<meta http-equiv=\"refresh\" content=\"0;\">";
+                            }
+                            ?>
                         </div>
                     </div>
                 </div>

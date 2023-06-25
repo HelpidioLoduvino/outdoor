@@ -10,4 +10,7 @@ interface IAdminRepository {
     public function listarCliente();
     public function getUserById($id);
     public function updateUser(User $user);
+    public function getClienteById($id);
+    public function atualizarEstadoCliente($userId, $estado);
+    public function getEstadoCliente($userId);
 }

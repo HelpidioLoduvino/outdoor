@@ -37,18 +37,31 @@ class AdminController {
     public function showCliente() {
         return $this->adminService->listCliente();
     }
-    
-    public function getIdUser($id){
+
+    public function getIdUser($id) {
         return $this->adminService->buscarUserId($id);
     }
-    
-    public function update(User $user){
+
+    public function getIdCliente($id) {
+        return $this->adminService->buscarClienteId($id);
+    }
+
+    public function update(User $user) {
         $this->adminService->editarUser($user);
+    }
+
+    public function updateClienteEstado($userId, $estado) {
+        $this->adminService->updateEstadoCliente($userId, $estado);
+    }
+    
+    public function getClienteEstado($userId){
+        return $this->adminService->buscarEstadoCliente($userId);
     }
 
     public function entrar($email, $password) {
         $user = $this->adminService->loginUser($email, $password);
         if ($user) {
+            $estado = $this->adminService->buscarEstadoCliente($user->getId());
             $tipo = $user->getTipo();
             session_start();
             $_SESSION['tipo'] = $tipo;
@@ -60,19 +73,23 @@ class AdminController {
                     header('Location: ../view/GestorView.php');
                     exit;
                 case 'cliente':
-                    $_SESSION['cliente'] = array(
-                        'id' => $user->getId(),
-                        'tipo' => $tipo,
-                        'nome' => $user->getNome(),
-                        'email' => $user->getEmail(),
-                        'provincia' => $user->getProvincia(),
-                        'municipio' => $user->getMunicipio(),
-                        'comuna' => $user->getComuna(),
-                        'morada' => $user->getMorada(),
-                        'contacto' => $user->getContacto(),
-                        'username' => $user->getUsername(),
-                    );
-                    header('Location: ../view/UserView.php');
+                    if ($estado !== 'Aprovado') {
+                        echo '<span style="color: red; display: block; text-align: center;">Aguardando por ativação</span>';
+                    } else {
+                        $_SESSION['cliente'] = array(
+                            'id' => $user->getId(),
+                            'tipo' => $tipo,
+                            'nome' => $user->getNome(),
+                            'email' => $user->getEmail(),
+                            'provincia' => $user->getProvincia(),
+                            'municipio' => $user->getMunicipio(),
+                            'comuna' => $user->getComuna(),
+                            'morada' => $user->getMorada(),
+                            'contacto' => $user->getContacto(),
+                            'username' => $user->getUsername(),
+                        );
+                        header('Location: ../view/UserView.php');
+                    }
                     exit;
                 default:
                     echo '<span style="color: red; display: block; text-align: center;">Tipo de usuário inválido</span>';
@@ -82,6 +99,7 @@ class AdminController {
             echo '<span style="color: red; display: block; text-align: center;">Email ou Senha Incorreta</span>';
         }
     }
+
 }
 
 $adminRepository = new AdminRepository();

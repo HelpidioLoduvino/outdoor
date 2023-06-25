@@ -123,7 +123,7 @@ class AdminRepository implements IAdminRepository {
 
         $allUsers = array();
 
-        while ($resultado = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+        while ($resultado = $stmt->fetch(PDO::FETCH_ASSOC)) {
 
             $user = new User();
             $user->setId($resultado["id"]);
@@ -160,6 +160,26 @@ class AdminRepository implements IAdminRepository {
 
         return $user;
     }
+    
+    public function getClienteById($id){
+        $query = 'SELECT * FROM clientes WHERE user_id = :id';
+        $stmt = Db::getConn()->prepare($query);
+        $stmt->bindParam(':id', $id);
+        $stmt->execute();
+        
+        $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        $cliente = new Cliente();
+        
+        $cliente->setId($resultado['id']);
+        $cliente->setNacionalidade($resultado['nacionalidade']);
+        $cliente->setTipoCliente($resultado['tipoCliente']);
+        $cliente->setAtividadeEmpresa($resultado['atividadeEmpresa']);
+        $cliente->setEstado($resultado['estado']);
+        
+        return $cliente;
+        
+    }
 
     public function updateUser(User $user) {
         try {
@@ -181,6 +201,24 @@ class AdminRepository implements IAdminRepository {
             echo $e->getMessage();
             return false;
         }
+    }
+    
+    public function atualizarEstadoCliente($userId, $estado) {
+        $query = "UPDATE clientes SET estado = :estado WHERE user_id = :userId";
+        $stmt = Db::getConn()->prepare($query);
+        $stmt->bindParam(':estado', $estado);
+        $stmt->bindParam(':userId', $userId);
+        $stmt->execute();
+    }
+    
+    public function getEstadoCliente($userId) {
+        $query = 'SELECT estado from clientes WHERE user_id = :userId';
+        $stmt = Db::getConn()->prepare($query);
+        $stmt->bindParam(':userId', $userId);
+        $stmt->execute();
+        $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        return $resultado['estado'];
     }
 
 }

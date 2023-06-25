@@ -10,4 +10,7 @@ interface IAdminService {
     public function listCliente();
     public function buscarUserId($id);
     public function editarUser(User $user);
+    public function buscarClienteId($id);
+    public function updateEstadoCliente($userId, $estado);
+    public function buscarEstadoCliente($userId);
 }
