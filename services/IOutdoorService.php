@@ -6,7 +6,7 @@ interface IOutdoorService {
     public function insertOutdoor(Outdoor $outdoor);
     public function listOutdoor();
     public function deletarOutdoor($id);
-    public function solicitarOutdoor(AlugarOutdoor $alugarOutdoor);
+    public function solicitarOutdoor(AlugarOutdoor $alugarOutdoor, $clienteId);
     public function listOutdoorAlugado();
     public function updateOutdoorState($outdoorId, $estado);
     public function deletarOutdoorAlugado($id);

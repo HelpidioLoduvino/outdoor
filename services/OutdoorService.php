@@ -36,9 +36,9 @@ class OutdoorService implements IOutdoorService {
         }
     }
 
-    public function solicitarOutdoor(AlugarOutdoor $alugarOutdoor) {
+    public function solicitarOutdoor(AlugarOutdoor $alugarOutdoor, $clienteId) {
         try {
-            return $this->outdoorRepository->alugarOutdoor($alugarOutdoor);
+            return $this->outdoorRepository->alugarOutdoor($alugarOutdoor, $clienteId);
         } catch (Exception $ex) {
             echo "An error occurred while: " . $ex->getMessage();
             return false;

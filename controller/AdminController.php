@@ -20,6 +20,7 @@ class AdminController {
     public function inserirUser(User $user) {
 
         $this->adminService->createUser($user);
+        
     }
 
     public function addClient(Cliente $cliente) {

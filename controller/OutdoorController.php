@@ -24,8 +24,8 @@ class OutdoorController {
         $this->outdoorService->deletarOutdoor($id);
     }
     
-    public function alugarOutdoor(AlugarOutdoor $alugarOutdoor){
-        $this->outdoorService->solicitarOutdoor($alugarOutdoor);
+    public function aluguerOutdoor(AlugarOutdoor $alugarOutdoor, $clienteId){
+        $this->outdoorService->solicitarOutdoor($alugarOutdoor, $clienteId);
     }
     
     public function showOutdoorAlugado(){

@@ -56,11 +56,12 @@ class OutdoorRepository implements IOutdoorRepository {
         $stmt->execute();
     }
 
-    public function alugarOutdoor(AlugarOutdoor $alugarOutdoor) {
+    public function alugarOutdoor(AlugarOutdoor $alugarOutdoor, $clienteId) {
         try {
-            $query_alugarOutdoor = 'INSERT INTO alugar_outdoor (outdoor_id, dataInicio, dataFim) VALUES (:outdoor_id, :dataInicio, :dataFim)';
+            $query_alugarOutdoor = 'INSERT INTO alugar_outdoor (outdoor_id, cliente_id, dataInicio, dataFim) VALUES (:outdoor_id, :cliente_id, :dataInicio, :dataFim)';
             $stmt_alugarOutdoor = Db::getConn()->prepare($query_alugarOutdoor);
             $stmt_alugarOutdoor->bindParam(':outdoor_id', $alugarOutdoor->getId());
+            $stmt_alugarOutdoor->bindParam(':cliente_id', $clienteId);
             $stmt_alugarOutdoor->bindParam(':dataInicio', $alugarOutdoor->getDataInicio());
             $stmt_alugarOutdoor->bindParam(':dataFim', $alugarOutdoor->getDataFim());
             $stmt_alugarOutdoor->execute();
@@ -72,7 +73,7 @@ class OutdoorRepository implements IOutdoorRepository {
     }
 
     public function listarOutdoorAlugado() {
-        $query = "SELECT a.outdoor_id, o.tipoOutdoor, o.preco, a.dataInicio, a.dataFim FROM alugar_outdoor a INNER JOIN outdoors o ON a.outdoor_id = o.id";
+        $query = 'SELECT a.outdoor_id, o.tipoOutdoor, o.preco, a.dataInicio, a.dataFim FROM alugar_outdoor a INNER JOIN outdoors o ON a.outdoor_id = o.id WHERE a.cliente_id = "'.$_SESSION['cliente']['id'].'" ';
         $stmt = Db::getConn()->prepare($query);
         $stmt->execute();
 

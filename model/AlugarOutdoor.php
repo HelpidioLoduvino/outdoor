@@ -20,5 +20,4 @@ class AlugarOutdoor extends Outdoor {
         $this->dataFim = $dataFim;
     }
 
-
 }

@@ -6,7 +6,7 @@ interface IOutdoorRepository {
     public function inserirOutdoor(Outdoor $outdoor);
     public function listarOutdoor();
     public function apagarOutdoor($id);
-    public function alugarOutdoor(AlugarOutdoor $alugarOutdoor);
+    public function alugarOutdoor(AlugarOutdoor $alugarOutdoor, $clienteId);
     public function listarOutdoorAlugado();
     public function atualizarEstadoOutdoor($outdoorId, $estado);
     public function apagarOutdoorAlugado($id);

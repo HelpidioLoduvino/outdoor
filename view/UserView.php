@@ -134,6 +134,8 @@ session_start();
                 echo '<br/>';
 
                 echo '<input type="hidden" name="outdoorId" value="' . $outdoor->getId() . '" >';
+                
+                echo '<input type="hidden" name="clienteId" value="' . $_SESSION['cliente']['id'] . '" >';
 
                 echo '<tr>';
                 echo '<td>';
@@ -186,7 +188,7 @@ session_start();
                 echo '</td>';
                 echo '<td>';
                 echo '<input type="date" name="dataFim" class="form-control" >';
-                echo '</td>';
+                echo '</td>';       
                 echo '</tr>';
 
                 echo '</table>';
@@ -209,10 +211,11 @@ session_start();
                 $dataInicio = filter_input(INPUT_POST, 'dataInicio', FILTER_SANITIZE_SPECIAL_CHARS);
                 $dataFim = filter_input(INPUT_POST, 'dataFim', FILTER_SANITIZE_SPECIAL_CHARS);
                 $outdoorId = filter_input(INPUT_POST, 'outdoorId', FILTER_SANITIZE_NUMBER_INT);
+                $clienteId = filter_input(INPUT_POST, 'clienteId', FILTER_SANITIZE_NUMBER_INT);
                 $alugarOutdoor->setDataInicio($dataInicio);
                 $alugarOutdoor->setDataFim($dataFim);
                 $alugarOutdoor->setId($outdoorId);
-                $outdoorController->alugarOutdoor($alugarOutdoor);
+                $outdoorController->aluguerOutdoor($alugarOutdoor, $clienteId);
                 $outdoorController->updateOutdoorEstado($outdoorId, 'A aguardar Pagamento');
                 echo "<meta http-equiv=\"refresh\" content=\"0;\">";
             }
@@ -406,7 +409,7 @@ session_start();
                             <table class="table">
                                 <thead>
                                     <tr>
-                                        <th scope="col">id</th>
+                                        <th scope="col">Outdoor Id</th>
                                         <th scope="col">Tipo de Outdoor</th>
                                         <th scope="col">Preco</th>
                                         <th scope="col">Data de Inicio</th>
