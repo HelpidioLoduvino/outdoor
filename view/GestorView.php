@@ -187,6 +187,7 @@ require_once '/Applications/XAMPP/xamppfiles/htdocs/outdoor-angola/model/Outdoor
                             if (isset($_POST['aprovar_pedido'])) {
                                 $outdoorId = filter_input(INPUT_POST, 'outdoorId', FILTER_SANITIZE_NUMBER_INT);
                                 $outdoorController->updateOutdoorEstado($outdoorId, 'Ocupado');
+                                $outdoorController->deleteAnalisarAluguer($outdoorId);
                                 echo "<meta http-equiv=\"refresh\" content=\"0;\">";
                             }
                             ?>
@@ -195,6 +196,7 @@ require_once '/Applications/XAMPP/xamppfiles/htdocs/outdoor-angola/model/Outdoor
                             if (isset($_POST['recusar_pedido'])) {
                                 $outdoorId = filter_input(INPUT_POST, 'outdoorId', FILTER_SANITIZE_NUMBER_INT);
                                 $outdoorController->updateOutdoorEstado($outdoorId, 'Disponivel');
+                                $outdoorController->deleteAnalisarAluguer($outdoorId);
                                 echo "<meta http-equiv=\"refresh\" content=\"0;\">";
                             }
                             ?>

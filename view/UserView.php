@@ -453,6 +453,7 @@ session_start();
                                 $dataFim = filter_input(INPUT_POST, 'dataFim');
                                 $outdoorController->analisarComprovativo($outdoorId, $clienteId, $dataInicio, $dataFim);
                                 $outdoorController->updateOutdoorEstado($outdoorId, 'Por Validar Pagamento');
+                                $outdoorController->deleteOutdoorAlugado($outdoorId);
                                 echo "<meta http-equiv=\"refresh\" content=\"0;\">";
                             }
                             ?>
