@@ -2,7 +2,6 @@
 require_once '/Applications/XAMPP/xamppfiles/htdocs/outdoor-angola/controller/OutdoorController.php';
 require_once '/Applications/XAMPP/xamppfiles/htdocs/outdoor-angola/controller/LocalidadeController.php';
 require_once '/Applications/XAMPP/xamppfiles/htdocs/outdoor-angola/model/Outdoor.php';
-session_start();
 ?>
 <html>
     <head>
@@ -12,9 +11,6 @@ session_start();
         <link href="../content/css/style.css" rel="stylesheet" type="text/css" media="screen"/> 
     </head>
     <body>
-        <?php
-        $isLoggedIn = isset($_SESSION['tipo']) && $_SESSION['tipo'] === 'gestor';
-        ?>
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <a class="navbar-brand title" href="#" style="margin-left: 20px;">Gestor</a>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -31,13 +27,9 @@ session_start();
                     <li class="nav-item">
                         <a class="nav-link" href="#" data-target="#gerirOutdoorModal">Gerir Outdoor</a>
                     </li>
-
-
-                    <?php if ($isLoggedIn): ?>
-                        <li class="nav-item ml-auto">
-                            <a class="nav-link" href="../actions/logout.php">Logout</a>
-                        </li>
-                    <?php endif; ?>
+                    <li class="nav-item ml-auto">
+                        <a class="nav-link" href="../actions/logout.php">Logout</a>
+                    </li>
                 </ul>
             </div>
         </nav>
@@ -157,43 +149,55 @@ session_start();
                                 <thead>
                                     <tr>
                                         <th scope="col">ID Outdoor</th>
-                                        <th scope="col">ID Cliente</th>
-                                        <th scope="col">Username Cliente</th>
+                                        <th scope="col">Nome Cliente</th>
                                         <th scope="col">Tipo de Outdoor</th>
                                         <th scope="col">Preco</th>
-                                        <th scope="col">Data de Inicio</th>
-                                        <th scope="col">Data Do Fim</th>
+                                        <th scope="col">Inicio</th>
+                                        <th scope="col">Fim</th>
+                                        <th scope="col">Aprovar</th>
+                                        <th scope="col">Recusar</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <?php
                                     $total = 0;
-                                    foreach ($outdoorController->showOutdoorAlugado() as $outdoor) {
+                                    foreach ($outdoorController->validarComprovativo() as $outdoor) {
                                         echo "<tr>";
                                         echo "<td>" . $outdoor->getId() . "</td>";
-                                        echo "<td>Por Fazer</td>";
-                                        echo "<td>Por Fazer</td>";
+                                        echo "<td>" . $outdoor->getClienteNome() . "</td>";
                                         echo "<td>" . $outdoor->getTipoOutdoor() . "</td>";
                                         echo "<td>" . $outdoor->getPreco() . "</td>";
                                         echo "<td>" . $outdoor->getDataInicio() . "</td>";
                                         echo "<td>" . $outdoor->getDataFim() . "</td>";
+                                        echo "<form method='POST'>";
+                                        echo "<input type='hidden' value=" . $outdoor->getId() . " name='outdoorId'>";
+                                        echo '<td><input type="submit" name="aprovar_pedido" class="btn btn-success" value="Aprovar"></input></td>';
+                                        echo '<td><input type="submit" name="recusar_pedido" class="btn btn-danger" value="Recusar"></input></td>';
+                                        echo '</form>';
                                         echo "</tr>";
 
                                         $total += $outdoor->getPreco();
-                                        if (isset($_POST['validar_pagamento'])) {
-                                            $outdoorId = $outdoor->getId();
-                                            $outdoorController->updateOutdoorEstado($outdoorId, 'Ocupado');
-                                            echo "<meta http-equiv=\"refresh\" content=\"0;\">";
-                                        }
                                     }
                                     echo '<th scope="row">Total a Pagar:</th>';
                                     echo '<td colspan="4"><input type="hidden" name="precoTotal" value="' . $total . '"><span class="currency">Kz </span>' . $total . '<span class="currency">.000,00</span></td>';
-                                    echo "<form method='POST'>";
-                                    echo '<td><input type="submit" name="validar_pagamento" class="btn btn-success" value="Validar Pagamento"></input></td>';
-                                    echo '</form>';
                                     ?>
                                 </tbody>
                             </table>
+                            <?php
+                            if (isset($_POST['aprovar_pedido'])) {
+                                $outdoorId = filter_input(INPUT_POST, 'outdoorId', FILTER_SANITIZE_NUMBER_INT);
+                                $outdoorController->updateOutdoorEstado($outdoorId, 'Ocupado');
+                                echo "<meta http-equiv=\"refresh\" content=\"0;\">";
+                            }
+                            ?>
+
+                            <?php
+                            if (isset($_POST['recusar_pedido'])) {
+                                $outdoorId = filter_input(INPUT_POST, 'outdoorId', FILTER_SANITIZE_NUMBER_INT);
+                                $outdoorController->updateOutdoorEstado($outdoorId, 'Disponivel');
+                                echo "<meta http-equiv=\"refresh\" content=\"0;\">";
+                            }
+                            ?>
                         </div>
                     </div>
                 </div>

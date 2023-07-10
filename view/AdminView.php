@@ -2,7 +2,6 @@
 require_once '/Applications/XAMPP/xamppfiles/htdocs/outdoor-angola/controller/AdminController.php';
 require_once '/Applications/XAMPP/xamppfiles/htdocs/outdoor-angola/controller/LocalidadeController.php';
 require_once '/Applications/XAMPP/xamppfiles/htdocs/outdoor-angola/model/User.php';
-session_start();
 ?>
 <html>
     <head>
@@ -13,9 +12,6 @@ session_start();
         <link href="../content/bootstrap/fonts/fontawesome.css" rel="stylesheet" type="text/css" media="screen"/>
     </head>
     <body>
-        <?php
-        $isLoggedIn = isset($_SESSION['tipo']) && $_SESSION['tipo'] === 'admin';
-        ?>
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <a class="navbar-brand title" href="#" style="margin-left: 20px;">Admin</a>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -37,12 +33,9 @@ session_start();
                         <a class="nav-link" href="#" data-target="#listAdminModal">Listar Users</a>
                     </li>
 
-                    <?php if ($isLoggedIn): ?>
-                        <li class="nav-item ml-auto">
-                            <a class="nav-link" href="../actions/logout.php">Logout</a>
-                        </li>
-                    <?php endif; ?>
-
+                    <li class="nav-item ml-auto">
+                        <a class="nav-link" href="../actions/logout.php">Logout</a>
+                    </li>
                 </ul>
             </div>
         </nav>
@@ -154,37 +147,38 @@ session_start();
                                 <tr>
                                 <input type="hidden" name="tipo" value="gestor">
 
-                                <td><input type="text" name="nome" class="form-control" placeholder="Nome" required ></td>
+                                <td><input type="text" name="nome" class="form-control" placeholder="Nome" required></td>
 
                                 <td><input type="text" name="email" class="form-control" placeholder="Email" required></td>
                                 </tr>
                                 <tr>
                                     <td>
-                                        <select name="comuna" class="form-control">
-                                            <option  >--Comuna --</option>
-                                            <option value="Viana">Viana</option>
+                                        <select name="provincia" id="provinciaSelect" class="form-control">
+                                            <option  >-- Provincia --</option>
+                                            <?php
+                                            $localidadeController->mostrarProvincia();
+                                            ?>
                                         </select>  
                                     </td>
 
                                     <td>
-                                        <select name="municipio" class="form-control">
+                                        <select name="municipio" id="municipioSelect" class="form-control">
                                             <option >-- Municipio --</option>
-                                            <option value="Viana">Viana</option>
+
                                         </select>  
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>
-                                        <select name="provincia" class="form-control">
-                                            <option   >-- Provincia --</option>
-                                            <option value="Luanda">Luanda</option>
+                                        <select name="comuna" id="comunaSelect" class="form-control">
+                                            <option   >-- Comuna --</option>
                                         </select>  
                                     </td>
 
                                     <td><input type="text" name="morada" class="form-control" placeholder="Morada" required></td>
                                 </tr>
                                 <tr>
-                                    <td><input type="text" name="contacto" class="form-control" placeholder="Contacto"required ></td>
+                                    <td><input type="text" name="contacto" class="form-control" placeholder="Contacto" required></td>
 
                                     <td><input type="text" name="username" class="form-control" placeholder="Username" required></td>
 
@@ -192,7 +186,7 @@ session_start();
                                 <tr>
                                     <td><input type="text" name="password" class="form-control" placeholder="Password" required></td>
 
-                                    <td><input type="text" name="confirm_password" class="form-control" placeholder="Confirm Password" ></td>
+                                    <td><input type="text" name="confirmPassword" class="form-control" placeholder="Confirm Password" ></td>
                                 </tr>
                             </table> 
                             <button type="submit" class="btn btn-success" name="add_gestor">Registrar</button>
@@ -350,6 +344,7 @@ session_start();
                             <?php
                             if (isset($_POST['delete_user'])) {
                                 $adminController->apagarUser($_POST['userId']);
+                                $adminController->apagarCliente($_POST['userId']);
                                 echo "<meta http-equiv=\"refresh\" content=\"0;\">";
                             }
                             ?>

@@ -5,6 +5,7 @@ interface IAdminRepository {
     public function registrarUser(User $user);
     public function listarAdmin();
     public function deleteUser($id);
+    public function deleteCliente($id);
     public function login($email, $password);
     public function inserirCliente(Cliente $cliente);
     public function listarCliente();

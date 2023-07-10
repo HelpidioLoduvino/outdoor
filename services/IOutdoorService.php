@@ -10,5 +10,7 @@ interface IOutdoorService {
     public function listOutdoorAlugado();
     public function updateOutdoorState($outdoorId, $estado);
     public function deletarOutdoorAlugado($id);
-  
+    public function deletarAnalisarAluguer($id);
+    public function analisarComprovativo();
+    public function inserirAnalisarOutdoor($outdoorId, $clienteId, $dataInicio, $dataFim);
 }

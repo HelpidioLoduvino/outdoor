@@ -69,4 +69,29 @@ class OutdoorService implements IOutdoorService {
         }
     }
 
+    public function analisarComprovativo() {
+        try {
+            return $this->outdoorRepository->AnalisarOutdoor();
+        } catch (Exception $ex) {
+            echo "An error occurred while: " . $ex->getMessage();
+        }
+    }
+
+    public function inserirAnalisarOutdoor($outdoorId, $clienteId, $dataInicio, $dataFim) {
+        try {
+            return $this->outdoorRepository->insertAnalisarOutdoor($outdoorId, $clienteId, $dataInicio, $dataFim);
+        } catch (Exception $ex) {
+            echo "An error occurred while: " . $ex->getMessage();
+            return false;
+        }
+    }
+
+    public function deletarAnalisarAluguer($id) {
+        try {
+            $this->outdoorRepository->apagarAnalisarAluguer($id);
+        } catch (Exception $ex) {
+            echo "An error occurred while: " . $ex->getMessage();
+        }
+    }
+
 }

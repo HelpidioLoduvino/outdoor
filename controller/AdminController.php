@@ -34,6 +34,10 @@ class AdminController {
     public function apagarUser($id) {
         $this->adminService->deletarUser($id);
     }
+    
+    public function apagarCliente($id) {
+        $this->adminService->deletarCliente($id);
+    }
 
     public function showCliente() {
         return $this->adminService->listCliente();

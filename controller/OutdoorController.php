@@ -39,6 +39,20 @@ class OutdoorController {
     public function deleteOutdoorAlugado($id){
         $this->outdoorService->deletarOutdoorAlugado($id);
     }
+    
+    public function deleteAnalisarAluguer($id){
+        $this->outdoorService->deletarAnalisarAluguer($id);
+    }
+    
+    public function validarComprovativo(){
+        return $this->outdoorService->analisarComprovativo();
+    }
+    
+    public function analisarComprovativo($outdoorId, $clienteId, $dataInicio, $dataFim){
+        $this->outdoorService->inserirAnalisarOutdoor($outdoorId, $clienteId, $dataInicio, $dataFim);
+    }
+    
+    
 }
 
 $outdoorRepository = new OutdoorRepository();

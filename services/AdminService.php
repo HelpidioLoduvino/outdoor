@@ -84,11 +84,11 @@ class AdminService implements IAdminService {
     }
 
     public function buscarClienteId($id) {
-       try {
+        try {
             return $this->adminRepository->getClienteById($id);
         } catch (Exception $ex) {
             echo "An error occurred while: " . $ex->getMessage();
-        } 
+        }
     }
 
     public function updateEstadoCliente($userId, $estado) {
@@ -102,6 +102,14 @@ class AdminService implements IAdminService {
     public function buscarEstadoCliente($userId) {
         try {
             return $this->adminRepository->getEstadoCliente($userId);
+        } catch (Exception $ex) {
+            echo "An error occurred while: " . $ex->getMessage();
+        }
+    }
+
+    public function deletarCliente($id) {
+        try {
+            $this->adminRepository->deleteCliente($id);
         } catch (Exception $ex) {
             echo "An error occurred while: " . $ex->getMessage();
         }

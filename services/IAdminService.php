@@ -5,6 +5,7 @@ interface IAdminService {
     public function createUser(User $user);
     public function listAdmin();
     public function deletarUser($id);
+    public function deletarCliente($id);
     public function loginUser($email, $password);
     public function insertClient(Cliente $cliente);
     public function listCliente();

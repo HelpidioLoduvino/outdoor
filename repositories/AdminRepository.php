@@ -87,6 +87,13 @@ class AdminRepository implements IAdminRepository {
         $stmt->bindParam(':id', $id);
         $stmt->execute();
     }
+    
+    public function deleteCliente($id) {
+        $query = 'DELETE FROM clientes WHERE user_id = :id';
+        $stmt = Db::getConn()->prepare($query);
+        $stmt->bindParam(':id', $id);
+        $stmt->execute();
+    }
 
     public function getUserByEmailOrUsername($email, $username) {
         $query = "SELECT * FROM users WHERE email = :email OR username = :username";
