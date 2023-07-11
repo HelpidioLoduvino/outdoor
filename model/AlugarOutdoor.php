@@ -5,6 +5,7 @@ class AlugarOutdoor extends Outdoor {
     private $dataFim;
     private $clienteId;
     private $clienteNome;
+    private $pdf;
     
     public function getDataInicio() {
         return $this->dataInicio;
@@ -20,6 +21,10 @@ class AlugarOutdoor extends Outdoor {
 
     public function getClienteNome() {
         return $this->clienteNome;
+    }
+
+    public function getPdf() {
+        return $this->pdf;
     }
 
     public function setDataInicio($dataInicio): void {
@@ -38,6 +43,7 @@ class AlugarOutdoor extends Outdoor {
         $this->clienteNome = $clienteNome;
     }
 
-
-
+    public function setPdf($pdf): void {
+        $this->pdf = $pdf;
+    }
 }

@@ -148,12 +148,9 @@ require_once '/Applications/XAMPP/xamppfiles/htdocs/outdoor-angola/model/Outdoor
                             <table class="table">
                                 <thead>
                                     <tr>
-                                        <th scope="col">ID Outdoor</th>
                                         <th scope="col">Nome Cliente</th>
                                         <th scope="col">Tipo de Outdoor</th>
-                                        <th scope="col">Preco</th>
-                                        <th scope="col">Inicio</th>
-                                        <th scope="col">Fim</th>
+                                        <th scope="col">PDF</th>
                                         <th scope="col">Aprovar</th>
                                         <th scope="col">Recusar</th>
                                     </tr>
@@ -163,12 +160,9 @@ require_once '/Applications/XAMPP/xamppfiles/htdocs/outdoor-angola/model/Outdoor
                                     $total = 0;
                                     foreach ($outdoorController->validarComprovativo() as $outdoor) {
                                         echo "<tr>";
-                                        echo "<td>" . $outdoor->getId() . "</td>";
                                         echo "<td>" . $outdoor->getClienteNome() . "</td>";
                                         echo "<td>" . $outdoor->getTipoOutdoor() . "</td>";
-                                        echo "<td>" . $outdoor->getPreco() . "</td>";
-                                        echo "<td>" . $outdoor->getDataInicio() . "</td>";
-                                        echo "<td>" . $outdoor->getDataFim() . "</td>";
+                                        echo "<td><a href='../actions/visualizar_pdf.php?outdoorId=" . $outdoor->getId() . "'>Visualizar PDF</a></td>";
                                         echo "<form method='POST'>";
                                         echo "<input type='hidden' value=" . $outdoor->getId() . " name='outdoorId'>";
                                         echo '<td><input type="submit" name="aprovar_pedido" class="btn btn-success" value="Aprovar"></input></td>';

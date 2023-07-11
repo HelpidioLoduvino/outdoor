@@ -48,8 +48,8 @@ class OutdoorController {
         return $this->outdoorService->analisarComprovativo();
     }
     
-    public function analisarComprovativo($outdoorId, $clienteId, $dataInicio, $dataFim){
-        $this->outdoorService->inserirAnalisarOutdoor($outdoorId, $clienteId, $dataInicio, $dataFim);
+    public function analisarComprovativo($outdoorId, $clienteId, $dataInicio, $dataFim, $conteudo){
+        $this->outdoorService->inserirAnalisarOutdoor($outdoorId, $clienteId, $dataInicio, $dataFim, $conteudo);
     }
     
     

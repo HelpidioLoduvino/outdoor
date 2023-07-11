@@ -77,9 +77,9 @@ class OutdoorService implements IOutdoorService {
         }
     }
 
-    public function inserirAnalisarOutdoor($outdoorId, $clienteId, $dataInicio, $dataFim) {
+    public function inserirAnalisarOutdoor($outdoorId, $clienteId, $dataInicio, $dataFim, $conteudo) {
         try {
-            return $this->outdoorRepository->insertAnalisarOutdoor($outdoorId, $clienteId, $dataInicio, $dataFim);
+            return $this->outdoorRepository->insertAnalisarOutdoor($outdoorId, $clienteId, $dataInicio, $dataFim, $conteudo);
         } catch (Exception $ex) {
             echo "An error occurred while: " . $ex->getMessage();
             return false;

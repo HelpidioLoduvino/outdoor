@@ -11,5 +11,5 @@ interface IOutdoorRepository {
     public function atualizarEstadoOutdoor($outdoorId, $estado);
     public function apagarOutdoorAlugado($id);
     public function AnalisarOutdoor();
-    public function insertAnalisarOutdoor($outdoorId, $clienteId, $dataInicio, $dataFim);
+    public function insertAnalisarOutdoor($outdoorId, $clienteId, $dataInicio, $dataFim, $conteudo);
 }

@@ -409,11 +409,11 @@ session_start();
                             <table class="table">
                                 <thead>
                                     <tr>
-                                        <th scope="col">Outdoor Id</th>
                                         <th scope="col">Tipo de Outdoor</th>
                                         <th scope="col">Preco</th>
                                         <th scope="col">Data de Inicio</th>
                                         <th scope="col">Data Do Fim</th>
+                                        <th scope="col">PDF</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -421,17 +421,17 @@ session_start();
                                     $totalPagar = 0;
                                     foreach ($outdoorController->showOutdoorAlugado() as $outdoor) {
                                         echo "<tr>";
-                                        echo "<td>" . $outdoor->getId() . "</td>";
                                         echo "<td>" . $outdoor->getTipoOutdoor() . "</td>";
                                         echo "<td>" . $outdoor->getPreco() . "</td>";
                                         echo "<td>" . $outdoor->getDataInicio() . "</td>";
                                         echo "<td>" . $outdoor->getDataFim() . "</td>";
                                         echo "<td>";
-                                        echo "<form method='POST'>";
+                                        echo "<form method='POST' enctype='multipart/form-data'>";
                                         echo "<input type='hidden' value=" . $outdoor->getId() . " name='outdoorId'>";
                                         echo "<input type='hidden' name='clienteId' value=" . $_SESSION['cliente']['id'] . ">";
                                         echo "<input type='hidden' name='dataInicio' value=" . $outdoor->getDataInicio() . ">";
                                         echo "<input type='hidden' name='dataFim' value=" . $outdoor->getDataFim() . ">";
+                                        echo '<input type="file" accept=".pdf" name="pdf">';
                                         echo '<td><input type="submit" name="carregar_pagamento" class="btn btn-success" value="Carregar Pagamento"></input></td>';
                                         echo "<td><button type='submit' name='apagar_outdoor' class='btn btn-danger'>Excluir</button></td>";
                                         echo "</form>";
@@ -451,10 +451,17 @@ session_start();
                                 $clienteId = filter_input(INPUT_POST, 'clienteId', FILTER_SANITIZE_NUMBER_INT);
                                 $dataInicio = filter_input(INPUT_POST, 'dataInicio');
                                 $dataFim = filter_input(INPUT_POST, 'dataFim');
-                                $outdoorController->analisarComprovativo($outdoorId, $clienteId, $dataInicio, $dataFim);
-                                $outdoorController->updateOutdoorEstado($outdoorId, 'Por Validar Pagamento');
-                                $outdoorController->deleteOutdoorAlugado($outdoorId);
-                                echo "<meta http-equiv=\"refresh\" content=\"0;\">";
+                                $pdf = $_FILES['pdf'];
+
+                                if ($pdf['error'] === UPLOAD_ERR_OK) {
+                                    $nomeArquivo = uniqid() . '.pdf';
+                                    $caminhoTemporario = $pdf['tmp_name'];
+                                    $conteudo = file_get_contents($caminhoTemporario, $nomeArquivo);
+                                    $outdoorController->analisarComprovativo($outdoorId, $clienteId, $dataInicio, $dataFim, $conteudo);
+                                    $outdoorController->updateOutdoorEstado($outdoorId, 'Por Validar Pagamento');
+                                    $outdoorController->deleteOutdoorAlugado($outdoorId);
+                                    echo "<meta http-equiv=\"refresh\" content=\"0;\">";
+                                }
                             }
                             ?>
 
@@ -477,12 +484,12 @@ session_start();
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-body">
-                        <?php
-                        $id = $_SESSION['cliente']['id'];
+<?php
+$id = $_SESSION['cliente']['id'];
 
-                        if (isset($id)) {
-                            $user = $adminController->getIdUser($id);
-                            echo '
+if (isset($id)) {
+    $user = $adminController->getIdUser($id);
+    echo '
                                 <form method="POST">
                                     
                                     <input type="hidden" name="userId" value="' . $user->getId() . '">
@@ -516,38 +523,38 @@ session_start();
                                     <button type="submit" class="btn btn-outline-dark" name="editar_cliente">Editar</button>
                                 </form>
                             ';
+}
+?>
+                    </div>
+                        <?php
+                        if (isset($_POST['editar_cliente'])) {
+                            $user = new User();
+
+                            $id = filter_input(INPUT_POST, 'userId', FILTER_SANITIZE_NUMBER_INT);
+                            $nome = filter_input(INPUT_POST, 'nome', FILTER_SANITIZE_STRING);
+                            //$email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_STRING);
+                            //$tipo = filter_input(INPUT_POST, 'tipo', FILTER_SANITIZE_STRING);
+                            //$provincia = filter_input(INPUT_POST, 'provincia', FILTER_SANITIZE_STRING);
+                            //$municipio = filter_input(INPUT_POST, 'municipio', FILTER_SANITIZE_STRING);
+                            //$comuna = filter_input(INPUT_POST, 'comuna', FILTER_SANITIZE_STRING);
+                            $morada = filter_input(INPUT_POST, 'morada', FILTER_SANITIZE_STRING);
+                            $contacto = filter_input(INPUT_POST, 'contacto', FILTER_SANITIZE_STRING);
+                            $username = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_STRING);
+
+                            $user->setId($id);
+                            $user->setNome($nome);
+                            // $user->setEmail($email);
+                            // $user->setProvincia($provincia);
+                            //$user->setMunicipio($municipio);
+                            //$user->setComuna($comuna);
+                            $user->setMorada($morada);
+                            $user->setContacto($contacto);
+                            $user->setUsername($username);
+
+                            $adminController->update($user);
+                            echo "<meta http-equiv=\"refresh\" content=\"0;\">";
                         }
                         ?>
-                    </div>
-                    <?php
-                    if (isset($_POST['editar_cliente'])) {
-                        $user = new User();
-
-                        $id = filter_input(INPUT_POST, 'userId', FILTER_SANITIZE_NUMBER_INT);
-                        $nome = filter_input(INPUT_POST, 'nome', FILTER_SANITIZE_STRING);
-                        //$email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_STRING);
-                        //$tipo = filter_input(INPUT_POST, 'tipo', FILTER_SANITIZE_STRING);
-                        //$provincia = filter_input(INPUT_POST, 'provincia', FILTER_SANITIZE_STRING);
-                        //$municipio = filter_input(INPUT_POST, 'municipio', FILTER_SANITIZE_STRING);
-                        //$comuna = filter_input(INPUT_POST, 'comuna', FILTER_SANITIZE_STRING);
-                        $morada = filter_input(INPUT_POST, 'morada', FILTER_SANITIZE_STRING);
-                        $contacto = filter_input(INPUT_POST, 'contacto', FILTER_SANITIZE_STRING);
-                        $username = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_STRING);
-
-                        $user->setId($id);
-                        $user->setNome($nome);
-                        // $user->setEmail($email);
-                        // $user->setProvincia($provincia);
-                        //$user->setMunicipio($municipio);
-                        //$user->setComuna($comuna);
-                        $user->setMorada($morada);
-                        $user->setContacto($contacto);
-                        $user->setUsername($username);
-
-                        $adminController->update($user);
-                        echo "<meta http-equiv=\"refresh\" content=\"0;\">";
-                    }
-                    ?>
                 </div>
             </div>
         </div>

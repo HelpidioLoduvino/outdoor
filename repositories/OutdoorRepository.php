@@ -114,18 +114,19 @@ class OutdoorRepository implements IOutdoorRepository {
         $stmt->execute();
     }
     
-    public function insertAnalisarOutdoor($outdoorId, $clienteId, $dataInicio, $dataFim){
-        $query = 'insert into analisar_aluguer(outdoor_id, cliente_id, dataInicio, dataFim) values(:outdoor_id, :cliente_id, :dataInicio, :dataFim)';
+    public function insertAnalisarOutdoor($outdoorId, $clienteId, $dataInicio, $dataFim, $conteudo){
+        $query = 'insert into analisar_aluguer(outdoor_id, cliente_id, dataInicio, dataFim, pdf) values(:outdoor_id, :cliente_id, :dataInicio, :dataFim, :pdf)';
         $stmt = Db::getConn()->prepare($query);
         $stmt->bindParam(':outdoor_id', $outdoorId);
         $stmt->bindParam(':cliente_id', $clienteId);
         $stmt->bindParam(':dataInicio', $dataInicio);
         $stmt->bindParam(':dataFim', $dataFim);
+        $stmt->bindParam(':pdf', $conteudo);
         $stmt->execute();
     }
 
     public function AnalisarOutdoor() {
-        $query = 'SELECT a.outdoor_id, o.tipoOutdoor, o.preco, a.dataInicio, a.dataFim FROM analisar_aluguer a INNER JOIN outdoors o ON a.outdoor_id = o.id';
+        $query = 'SELECT a.outdoor_id, a.pdf, o.tipoOutdoor, o.preco, a.dataInicio, a.dataFim FROM analisar_aluguer a INNER JOIN outdoors o ON a.outdoor_id = o.id';
         $stmt = Db::getConn()->prepare($query);
         $stmt->execute();
         $results = $stmt->fetchAll(\PDO::FETCH_ASSOC);
@@ -140,6 +141,7 @@ class OutdoorRepository implements IOutdoorRepository {
         foreach ($results as $index => $resultado) {
             $alugar_outdoor = new AlugarOutdoor();
             $alugar_outdoor->setId($resultado["outdoor_id"]);
+            $alugar_outdoor->setPdf($resultado['pdf']);
             $alugar_outdoor->setTipoOutdoor($resultado["tipoOutdoor"]);
             $alugar_outdoor->setPreco($resultado["preco"]);
             $alugar_outdoor->setDataInicio($resultado["dataInicio"]);

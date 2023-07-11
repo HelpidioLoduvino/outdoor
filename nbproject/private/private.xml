@@ -3,11 +3,12 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/Applications/XAMPP/htdocs/outdoor-angola/repositories/OutdoorRepository.php</file>
+            <file>file:/Applications/XAMPP/htdocs/outdoor-angola/scripts/custom/localidade.js</file>
+            <file>file:/Applications/XAMPP/htdocs/outdoor-angola/repositories/LocalidadeRepository.php</file>
             <file>file:/Applications/XAMPP/htdocs/outdoor-angola/index.php</file>
-            <file>file:/Applications/XAMPP/htdocs/outdoor-angola/controller/OutdoorController.php</file>
-            <file>file:/Applications/XAMPP/htdocs/outdoor-angola/services/OutdoorService.php</file>
             <file>file:/Applications/XAMPP/htdocs/outdoor-angola/view/UserView.php</file>
+            <file>file:/Applications/XAMPP/htdocs/outdoor-angola/repositories/getMunicipio.php</file>
+            <file>file:/Applications/XAMPP/htdocs/outdoor-angola/services/LocalidadeService.php</file>
             <file>file:/Applications/XAMPP/htdocs/outdoor-angola/view/GestorView.php</file>
         </group>
     </open-files>
