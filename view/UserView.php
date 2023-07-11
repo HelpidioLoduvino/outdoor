@@ -300,8 +300,10 @@ session_start();
                                 <tr>
                                     <td>
                                         <select name="nacionalidade" class="form-control" required>
-                                            <option>-- Nacionalidade --</option>
-                                            <option value="Angolano(a)">Angolano(a)</option>
+                                            <option  >-- Nacionalidade --</option>
+                                            <?php 
+                                            $localidadeController->mostrarNacionalidade();
+                                            ?>
                                         </select>
                                     </td>
                                 </tr>

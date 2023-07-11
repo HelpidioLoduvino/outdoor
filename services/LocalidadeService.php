@@ -19,4 +19,12 @@ class LocalidadeService implements ILocalidadeService{
         }
     }
 
+    public function buscarNacionalidade() {
+        try{
+            return $this->localidadeRepository->getNacionalidade();
+        } catch (Exception $ex) {
+            echo "An error occurred while: " . $ex->getMessage();
+        }
+    }
+
 }

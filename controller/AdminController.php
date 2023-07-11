@@ -75,6 +75,7 @@ class AdminController {
                     header('Location: ../view/AdminView.php');
                     exit;
                 case 'gestor':
+                    
                     header('Location: ../view/GestorView.php');
                     exit;
                 case 'cliente':

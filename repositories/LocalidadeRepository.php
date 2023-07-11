@@ -20,4 +20,18 @@ class LocalidadeRepository implements ILocalidadeRepository {
         }
     }
 
+    public function getNacionalidade() {
+        try{
+            $query = 'SELECT * FROM nacionalidade';
+            $stmt = Db::getConn()->prepare($query);
+            $stmt->execute();
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                echo "<option value='" . $row['nome'] . "'>" . $row['nome'] . "</option>";
+            }
+        } catch (PDOException $e) {
+            echo $e->getMessage();
+            return false;
+        }
+    }
+
 }

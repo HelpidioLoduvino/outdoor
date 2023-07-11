@@ -13,6 +13,10 @@ class LocalidadeController {
     public function mostrarProvincia(){
         return $this->localidadeService->buscarProvincia();
     }
+    
+    public function mostrarNacionalidade(){
+        return $this->localidadeService->buscarNacionalidade();
+    }
 }
 
 
