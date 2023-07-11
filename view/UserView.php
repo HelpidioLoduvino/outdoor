@@ -212,12 +212,16 @@ session_start();
                 $dataFim = filter_input(INPUT_POST, 'dataFim', FILTER_SANITIZE_SPECIAL_CHARS);
                 $outdoorId = filter_input(INPUT_POST, 'outdoorId', FILTER_SANITIZE_NUMBER_INT);
                 $clienteId = filter_input(INPUT_POST, 'clienteId', FILTER_SANITIZE_NUMBER_INT);
-                $alugarOutdoor->setDataInicio($dataInicio);
-                $alugarOutdoor->setDataFim($dataFim);
-                $alugarOutdoor->setId($outdoorId);
-                $outdoorController->aluguerOutdoor($alugarOutdoor, $clienteId);
-                $outdoorController->updateOutdoorEstado($outdoorId, 'A aguardar Pagamento');
-                echo "<meta http-equiv=\"refresh\" content=\"0;\">";
+                if ($dataInicio > $dataFim) {
+                    echo '<span style="color: red; display: block; text-align: center;">Data Invalida</span>';
+                } else {
+                    $alugarOutdoor->setDataInicio($dataInicio);
+                    $alugarOutdoor->setDataFim($dataFim);
+                    $alugarOutdoor->setId($outdoorId);
+                    $outdoorController->aluguerOutdoor($alugarOutdoor, $clienteId);
+                    $outdoorController->updateOutdoorEstado($outdoorId, 'A aguardar Pagamento');
+                    echo "<meta http-equiv=\"refresh\" content=\"0;\">";
+                }
             }
             ?>
         </div>
@@ -290,7 +294,7 @@ session_start();
                                 <tr>
                                     <td><input type="text" name="password" class="form-control" placeholder="Password" required></td>
 
-                                    <td><input type="text" name="confirmPassword" class="form-control" placeholder="Confirm Password" ></td>
+                                    <td><input type="text" name="confirmPassword" class="form-control" placeholder="Confirm Password" required></td>
                                 </tr>
 
                                 <tr>
@@ -320,38 +324,43 @@ session_start();
                             $contacto = filter_input(INPUT_POST, 'contacto', FILTER_SANITIZE_STRING);
                             $username = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_STRING);
                             $password = filter_input(INPUT_POST, 'password', FILTER_SANITIZE_STRING);
+                            $confirmPassword = filter_input(INPUT_POST, 'confirmPassword', FILTER_SANITIZE_STRING);
                             $nacionalidade = filter_input(INPUT_POST, 'nacionalidade', FILTER_SANITIZE_STRING);
                             $tipoCliente = filter_input(INPUT_POST, 'tipoCliente', FILTER_SANITIZE_STRING);
                             $atividadeEmpresa = filter_input(INPUT_POST, 'atividadeEmpresa', FILTER_SANITIZE_STRING);
 
-                            $user->setTipo($tipo);
-                            $user->setNome($nome);
-                            $user->setEmail($email);
-                            $user->setComuna($comuna);
-                            $user->setMunicipio($municipio);
-                            $user->setProvincia($provincia);
-                            $user->setMorada($morada);
-                            $user->setContacto($contacto);
-                            $user->setUsername($username);
-                            $user->setPassword($password);
-                            $adminController->inserirUser($user);
-
-                            $cliente = new Cliente();
-
-                            $cliente->setNacionalidade($nacionalidade);
-                            $cliente->setTipoCliente($tipoCliente);
-                            $cliente->setEstado($estado);
-
-                            if ($tipoCliente === 'Particular') {
-                                $atividadeEmpresa = null;
-                                $cliente->setAtividadeEmpresa($atividadeEmpresa);
+                            if ($password !== $confirmPassword) {
+                                echo '<span style="color: red; display: block; text-align: center;">Passwords Do Not Match</span>';
                             } else {
+                                $user->setTipo($tipo);
+                                $user->setNome($nome);
+                                $user->setEmail($email);
+                                $user->setComuna($comuna);
+                                $user->setMunicipio($municipio);
+                                $user->setProvincia($provincia);
+                                $user->setMorada($morada);
+                                $user->setContacto($contacto);
+                                $user->setUsername($username);
+                                $user->setPassword($password);
+                                $adminController->inserirUser($user);
 
-                                $cliente->setAtividadeEmpresa($atividadeEmpresa);
+                                $cliente = new Cliente();
+
+                                $cliente->setNacionalidade($nacionalidade);
+                                $cliente->setTipoCliente($tipoCliente);
+                                $cliente->setEstado($estado);
+
+                                if ($tipoCliente === 'Particular') {
+                                    $atividadeEmpresa = null;
+                                    $cliente->setAtividadeEmpresa($atividadeEmpresa);
+                                } else {
+
+                                    $cliente->setAtividadeEmpresa($atividadeEmpresa);
+                                }
+
+                                $adminController->addClient($cliente);
+                                echo "<meta http-equiv=\"refresh\" content=\"0;\">";
                             }
-
-                            $adminController->addClient($cliente);
-                            echo "<meta http-equiv=\"refresh\" content=\"0;\">";
                         }
                         ?>
                     </div>
@@ -484,12 +493,12 @@ session_start();
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-body">
-<?php
-$id = $_SESSION['cliente']['id'];
+                        <?php
+                        $id = $_SESSION['cliente']['id'];
 
-if (isset($id)) {
-    $user = $adminController->getIdUser($id);
-    echo '
+                        if (isset($id)) {
+                            $user = $adminController->getIdUser($id);
+                            echo '
                                 <form method="POST">
                                     
                                     <input type="hidden" name="userId" value="' . $user->getId() . '">
@@ -523,38 +532,38 @@ if (isset($id)) {
                                     <button type="submit" class="btn btn-outline-dark" name="editar_cliente">Editar</button>
                                 </form>
                             ';
-}
-?>
-                    </div>
-                        <?php
-                        if (isset($_POST['editar_cliente'])) {
-                            $user = new User();
-
-                            $id = filter_input(INPUT_POST, 'userId', FILTER_SANITIZE_NUMBER_INT);
-                            $nome = filter_input(INPUT_POST, 'nome', FILTER_SANITIZE_STRING);
-                            //$email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_STRING);
-                            //$tipo = filter_input(INPUT_POST, 'tipo', FILTER_SANITIZE_STRING);
-                            //$provincia = filter_input(INPUT_POST, 'provincia', FILTER_SANITIZE_STRING);
-                            //$municipio = filter_input(INPUT_POST, 'municipio', FILTER_SANITIZE_STRING);
-                            //$comuna = filter_input(INPUT_POST, 'comuna', FILTER_SANITIZE_STRING);
-                            $morada = filter_input(INPUT_POST, 'morada', FILTER_SANITIZE_STRING);
-                            $contacto = filter_input(INPUT_POST, 'contacto', FILTER_SANITIZE_STRING);
-                            $username = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_STRING);
-
-                            $user->setId($id);
-                            $user->setNome($nome);
-                            // $user->setEmail($email);
-                            // $user->setProvincia($provincia);
-                            //$user->setMunicipio($municipio);
-                            //$user->setComuna($comuna);
-                            $user->setMorada($morada);
-                            $user->setContacto($contacto);
-                            $user->setUsername($username);
-
-                            $adminController->update($user);
-                            echo "<meta http-equiv=\"refresh\" content=\"0;\">";
                         }
                         ?>
+                    </div>
+                    <?php
+                    if (isset($_POST['editar_cliente'])) {
+                        $user = new User();
+
+                        $id = filter_input(INPUT_POST, 'userId', FILTER_SANITIZE_NUMBER_INT);
+                        $nome = filter_input(INPUT_POST, 'nome', FILTER_SANITIZE_STRING);
+                        //$email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_STRING);
+                        //$tipo = filter_input(INPUT_POST, 'tipo', FILTER_SANITIZE_STRING);
+                        //$provincia = filter_input(INPUT_POST, 'provincia', FILTER_SANITIZE_STRING);
+                        //$municipio = filter_input(INPUT_POST, 'municipio', FILTER_SANITIZE_STRING);
+                        //$comuna = filter_input(INPUT_POST, 'comuna', FILTER_SANITIZE_STRING);
+                        $morada = filter_input(INPUT_POST, 'morada', FILTER_SANITIZE_STRING);
+                        $contacto = filter_input(INPUT_POST, 'contacto', FILTER_SANITIZE_STRING);
+                        $username = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_STRING);
+
+                        $user->setId($id);
+                        $user->setNome($nome);
+                        // $user->setEmail($email);
+                        // $user->setProvincia($provincia);
+                        //$user->setMunicipio($municipio);
+                        //$user->setComuna($comuna);
+                        $user->setMorada($morada);
+                        $user->setContacto($contacto);
+                        $user->setUsername($username);
+
+                        $adminController->update($user);
+                        echo "<meta http-equiv=\"refresh\" content=\"0;\">";
+                    }
+                    ?>
                 </div>
             </div>
         </div>

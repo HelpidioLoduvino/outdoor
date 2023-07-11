@@ -93,7 +93,7 @@ require_once '/Applications/XAMPP/xamppfiles/htdocs/outdoor-angola/model/User.ph
                                 <tr>
                                     <td><input type="text" name="password" class="form-control" placeholder="Password" required></td>
 
-                                    <td><input type="text" name="confirmPassword" class="form-control" placeholder="Confirm Password" ></td>
+                                    <td><input type="text" name="confirmPassword" class="form-control" placeholder="Confirm Password" required></td>
                                 </tr>
                             </table> 
                             <button type="submit" class="btn btn-success" name="add_admin">Registrar</button>
@@ -113,19 +113,25 @@ require_once '/Applications/XAMPP/xamppfiles/htdocs/outdoor-angola/model/User.ph
                             $contacto = filter_input(INPUT_POST, 'contacto', FILTER_SANITIZE_STRING);
                             $username = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_STRING);
                             $password = filter_input(INPUT_POST, 'password', FILTER_SANITIZE_STRING);
+                            $confirmPassword = filter_input(INPUT_POST, 'confirmPassword', FILTER_SANITIZE_STRING);
 
-                            $user->setTipo($tipo);
-                            $user->setNome($nome);
-                            $user->setEmail($email);
-                            $user->setComuna($comuna);
-                            $user->setMunicipio($municipio);
-                            $user->setProvincia($provincia);
-                            $user->setMorada($morada);
-                            $user->setContacto($contacto);
-                            $user->setUsername($username);
-                            $user->setPassword($password);
-                            $adminController->inserirUser($user);
-                            echo "<meta http-equiv=\"refresh\" content=\"0;\">";
+                            if ($password !== $confirmPassword) {
+                                echo '<span style="color: red; display: block; text-align: center;">Passwords Do Not Match</span>';
+                            } else {
+
+                                $user->setTipo($tipo);
+                                $user->setNome($nome);
+                                $user->setEmail($email);
+                                $user->setComuna($comuna);
+                                $user->setMunicipio($municipio);
+                                $user->setProvincia($provincia);
+                                $user->setMorada($morada);
+                                $user->setContacto($contacto);
+                                $user->setUsername($username);
+                                $user->setPassword($password);
+                                $adminController->inserirUser($user);
+                                echo "<meta http-equiv=\"refresh\" content=\"0;\">";
+                            }
                         }
                         ?>
                     </div>
@@ -186,7 +192,7 @@ require_once '/Applications/XAMPP/xamppfiles/htdocs/outdoor-angola/model/User.ph
                                 <tr>
                                     <td><input type="text" name="password" class="form-control" placeholder="Password" required></td>
 
-                                    <td><input type="text" name="confirmPassword" class="form-control" placeholder="Confirm Password" ></td>
+                                    <td><input type="text" name="confirmPassword" class="form-control" placeholder="Confirm Password" required></td>
                                 </tr>
                             </table> 
                             <button type="submit" class="btn btn-success" name="add_gestor">Registrar</button>
@@ -205,19 +211,24 @@ require_once '/Applications/XAMPP/xamppfiles/htdocs/outdoor-angola/model/User.ph
                             $contacto = filter_input(INPUT_POST, 'contacto', FILTER_SANITIZE_STRING);
                             $username = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_STRING);
                             $password = filter_input(INPUT_POST, 'password', FILTER_SANITIZE_STRING);
+                            $confirmPassword = filter_input(INPUT_POST, 'confirmPassword', FILTER_SANITIZE_STRING);
 
-                            $user->setTipo($tipo);
-                            $user->setNome($nome);
-                            $user->setEmail($email);
-                            $user->setComuna($comuna);
-                            $user->setMunicipio($municipio);
-                            $user->setProvincia($provincia);
-                            $user->setMorada($morada);
-                            $user->setContacto($contacto);
-                            $user->setUsername($username);
-                            $user->setPassword($password);
-                            $adminController->inserirUser($user);
-                            echo "<meta http-equiv=\"refresh\" content=\"0;\">";
+                            if ($password !== $confirmPassword) {
+                                echo '<span style="color: red; display: block; text-align: center;">Passwords Do Not Match</span>';
+                            } else {
+                                $user->setTipo($tipo);
+                                $user->setNome($nome);
+                                $user->setEmail($email);
+                                $user->setComuna($comuna);
+                                $user->setMunicipio($municipio);
+                                $user->setProvincia($provincia);
+                                $user->setMorada($morada);
+                                $user->setContacto($contacto);
+                                $user->setUsername($username);
+                                $user->setPassword($password);
+                                $adminController->inserirUser($user);
+                                echo "<meta http-equiv=\"refresh\" content=\"0;\">";
+                            }
                         }
                         ?>
                     </div>
